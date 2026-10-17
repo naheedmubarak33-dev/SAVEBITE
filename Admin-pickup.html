@@ -1,0 +1,256 @@
+
+raw
+Admin pickups · HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pickups - Save Bite Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{--green:#2e7d32;--green-light:#43a047;--green-pale:#e8f5e9;--green-accent:#66bb6a;--gray:#f4f6f4;--text:#1b2e1c;--muted:#6b7c6b;--sw:240px;--shadow:0 2px 12px rgba(46,125,50,.10);}
+  body{font-family:'Poppins',sans-serif;background:var(--gray);color:var(--text);display:flex;}
+  .sidebar{width:var(--sw);background:linear-gradient(180deg,#1b5e20,#2e7d32);min-height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;z-index:100;}
+  .sb-logo{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:10px;}
+  .sb-logo .li{width:34px;height:34px;background:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+  .sb-logo h2{color:#fff;font-size:1.1rem;font-weight:700;}.sb-logo h2 span{color:#66bb6a;}
+  .sb-nav{padding:14px 0;flex:1;}
+  .nl{color:rgba(255,255,255,.4);font-size:.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:8px 20px 3px;}
+  .ni{display:flex;align-items:center;gap:10px;padding:10px 20px;color:rgba(255,255,255,.78);cursor:pointer;transition:all .2s;font-size:.86rem;border-left:3px solid transparent;text-decoration:none;}
+  .ni:hover,.ni.active{background:rgba(255,255,255,.11);color:#fff;border-left-color:#66bb6a;}
+  .ni .ic{font-size:.95rem;width:18px;text-align:center;}
+  .sb-bot{padding:12px 20px;border-top:1px solid rgba(255,255,255,.12);}
+  .lo{display:flex;align-items:center;gap:9px;cursor:pointer;}.lo span{color:rgba(255,255,255,.6);font-size:.82rem;transition:color .2s;}.lo:hover span{color:#ff6b6b;}
+  .main{margin-left:var(--sw);flex:1;padding:26px 28px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+  .topbar h1{font-size:1.35rem;font-weight:700;}.topbar p{color:var(--muted);font-size:.8rem;margin-top:1px;}
+  .btn-primary{background:var(--green);color:#fff;border:none;border-radius:10px;padding:9px 18px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;transition:background .2s;}
+  .btn-primary:hover{background:var(--green-light);}
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+  .sc{background:#fff;border-radius:13px;padding:16px;box-shadow:var(--shadow);border:1px solid #eaf3ea;display:flex;align-items:center;gap:13px;}
+  .sc-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+  .ig{background:var(--green-pale)}.io{background:#fff3e0}.ib{background:#e3f2fd}.ir{background:#fce4ec}
+  .sc-info h3{font-size:1.4rem;font-weight:700;}.sc-info p{font-size:.74rem;color:var(--muted);margin-top:2px;}
+  .toolbar{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
+  .search-box{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #dde8dd;border-radius:10px;padding:8px 14px;flex:1;min-width:200px;}
+  .search-box input{border:none;outline:none;font-family:'Poppins',sans-serif;font-size:.82rem;color:var(--text);background:transparent;width:100%;}
+  .filter-select{background:#fff;border:1.5px solid #dde8dd;border-radius:10px;padding:9px 12px;font-family:'Poppins',sans-serif;font-size:.82rem;color:var(--text);outline:none;cursor:pointer;}
+  .panel{background:#fff;border-radius:14px;padding:20px;box-shadow:var(--shadow);border:1px solid #eaf3ea;}
+  .data-table{width:100%;border-collapse:collapse;}
+  .data-table th{font-size:.7rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;padding:8px 10px;text-align:left;border-bottom:1.5px solid #eaf3ea;}
+  .data-table td{padding:11px 10px;font-size:.8rem;border-bottom:1px solid #f2f7f2;vertical-align:middle;}
+  .data-table tr:last-child td{border-bottom:none;}.data-table tr:hover td{background:#f8fdf8;}
+  .tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:600;}
+  .tag.scheduled{background:#e8f5e9;color:#2e7d32}.tag.in-progress{background:#fff8e1;color:#f57f17}.tag.completed{background:#e3f2fd;color:#1565c0}.tag.failed{background:#fce4ec;color:#c62828}
+  .ab{border:none;border-radius:6px;padding:4px 11px;font-family:'Poppins',sans-serif;font-size:.7rem;font-weight:600;cursor:pointer;transition:opacity .2s;}
+  .ab:hover{opacity:.75;}.ab.start{background:#fff8e1;color:#f57f17;}.ab.complete{background:#e8f5e9;color:#2e7d32;}.ab.del{background:#fce4ec;color:#c62828;}.ab.edit{background:#e3f2fd;color:#1565c0;}
+  .actions{display:flex;gap:5px;flex-wrap:wrap;}
+  .empty-row td{text-align:center;padding:30px;color:var(--muted);font-size:.85rem;}
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;}
+  .modal-overlay.show{display:flex;}
+  .modal{background:#fff;border-radius:16px;padding:28px;width:100%;max-width:480px;box-shadow:0 8px 40px rgba(0,0,0,.18);}
+  .modal h3{font-size:1.05rem;font-weight:700;margin-bottom:18px;}
+  .fg{display:flex;flex-direction:column;gap:5px;margin-bottom:13px;}
+  .fg label{font-size:.73rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+  .fg input,.fg select{border:1.5px solid #dde8dd;border-radius:9px;padding:9px 12px;font-family:'Poppins',sans-serif;font-size:.82rem;color:var(--text);outline:none;transition:border-color .2s;}
+  .fg input:focus,.fg select:focus{border-color:#66bb6a;}
+  .fg-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .modal-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:4px;}
+  .btn-cancel{background:#f4f6f4;color:var(--text);border:none;border-radius:9px;padding:9px 18px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;}
+  .btn-save{background:var(--green);color:#fff;border:none;border-radius:9px;padding:9px 20px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:background .2s;}
+  .btn-save:hover{background:var(--green-light);}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#fff;padding:12px 20px;border-radius:10px;font-size:.82rem;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;}
+  .toast.show{opacity:1;transform:translateY(0);}
+  ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:#c8e6c9;border-radius:10px;}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sb-logo"><div class="li">🍱</div><h2>Save <span>Bite</span></h2></div>
+  <nav class="sb-nav">
+    <div class="nl">Main</div>
+    <a class="ni" href="Admin-panel.html"><span class="ic">📊</span> Dashboard</a>
+    <a class="ni" href="Admin-user.html"><span class="ic">👥</span> Users</a>
+    <a class="ni" href="Admin-ngo.html"><span class="ic">🏢</span> NGOs</a>
+    <a class="ni" href="Admin-donation.html"><span class="ic">🍽️</span> Donations</a>
+    <div class="nl" style="margin-top:10px;">Management</div>
+    <a class="ni" href="Admin-request.html"><span class="ic">📋</span> Requests</a>
+    <a class="ni active" href="Admin-pickup.html"><span class="ic">🚚</span> Pickups</a>
+    <a class="ni" href="admin-report.html"><span class="ic">📈</span> Reports</a>
+    <a class="ni" href="admin-setting.html"><span class="ic">⚙️</span> Settings</a>
+  </nav>
+  <div class="sb-bot"><div class="lo"><span>⏻</span><span>Logout</span></div></div>
+</aside>
+ 
+<main class="main">
+  <div class="topbar">
+    <div><h1>Pickup Management</h1><p>Track and manage all food pickups.</p></div>
+    <button class="btn-primary" onclick="openModal()">➕ Schedule Pickup</button>
+  </div>
+ 
+  <div class="stats-row">
+    <div class="sc"><div class="sc-icon ig">🚚</div><div class="sc-info"><h3 id="s-total">0</h3><p>Total Pickups</p></div></div>
+    <div class="sc"><div class="sc-icon ig">📅</div><div class="sc-info"><h3 id="s-scheduled">0</h3><p>Scheduled</p></div></div>
+    <div class="sc"><div class="sc-icon io">🔄</div><div class="sc-info"><h3 id="s-inprogress">0</h3><p>In Progress</p></div></div>
+    <div class="sc"><div class="sc-icon ib">✅</div><div class="sc-info"><h3 id="s-completed">0</h3><p>Completed</p></div></div>
+  </div>
+ 
+  <div class="toolbar">
+    <div class="search-box">🔍 <input type="text" id="searchInput" placeholder="Search volunteer or NGO..." oninput="renderTable()"></div>
+    <select class="filter-select" id="statusFilter" onchange="renderTable()">
+      <option value="">All Status</option>
+      <option value="scheduled">Scheduled</option>
+      <option value="in-progress">In Progress</option>
+      <option value="completed">Completed</option>
+      <option value="failed">Failed</option>
+    </select>
+  </div>
+ 
+  <div class="panel">
+    <table class="data-table">
+      <thead>
+        <tr><th>#</th><th>Food</th><th>Volunteer</th><th>NGO</th><th>Pickup Time</th><th>Location</th><th>Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody id="pickupTableBody"></tbody>
+    </table>
+  </div>
+</main>
+ 
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3 id="modalTitle">Schedule Pickup</h3>
+    <div class="fg"><label>Food Item</label><input type="text" id="f-food" placeholder="Food name"></div>
+    <div class="fg-row">
+      <div class="fg"><label>Volunteer Name</label><input type="text" id="f-vol" placeholder="Volunteer"></div>
+      <div class="fg"><label>NGO</label><input type="text" id="f-ngo" placeholder="NGO name"></div>
+    </div>
+    <div class="fg"><label>Pickup Location</label><input type="text" id="f-loc" placeholder="Pickup address"></div>
+    <div class="fg-row">
+      <div class="fg"><label>Pickup Time</label><input type="datetime-local" id="f-time"></div>
+      <div class="fg"><label>Status</label>
+        <select id="f-status">
+          <option value="scheduled">Scheduled</option>
+          <option value="in-progress">In Progress</option>
+          <option value="completed">Completed</option>
+          <option value="failed">Failed</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="savePickup()">Save</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+ 
+<script>
+  let editId=null;
+ 
+  function seedData(){
+    if(localStorage.getItem('sb_pickups'))return;
+    const d=[
+      {id:1,food:'Biryani',volunteer:'Ali Khan',ngo:'Edhi Foundation',loc:'Gulshan, Karachi',time:'2026-06-08T15:00',status:'scheduled'},
+      {id:2,food:'Bread Loaves',volunteer:'Sara Raza',ngo:'Saylani Welfare',loc:'DHA, Karachi',time:'2026-06-08T11:00',status:'completed'},
+      {id:3,food:'Dal Chawal',volunteer:'M. Naveed',ngo:'Akhuwat NGO',loc:'North Nazimabad',time:'2026-06-09T12:00',status:'scheduled'},
+      {id:4,food:'Samosa',volunteer:'Zara Aslam',ngo:'Edhi Foundation',loc:'Saddar, Karachi',time:'2026-06-08T17:00',status:'in-progress'},
+      {id:5,food:'Cake',volunteer:'Ali Khan',ngo:'Saylani Welfare',loc:'Clifton, Karachi',time:'2026-06-06T10:00',status:'completed'},
+    ];
+    localStorage.setItem('sb_pickups',JSON.stringify(d));
+  }
+ 
+  function getPickups(){return JSON.parse(localStorage.getItem('sb_pickups')||'[]');}
+  function savePickups(arr){localStorage.setItem('sb_pickups',JSON.stringify(arr));}
+  function nextId(arr){return arr.length?Math.max(...arr.map(u=>u.id))+1:1;}
+ 
+  function updateStats(){
+    const p=getPickups();
+    document.getElementById('s-total').textContent     =p.length;
+    document.getElementById('s-scheduled').textContent =p.filter(x=>x.status==='scheduled').length;
+    document.getElementById('s-inprogress').textContent=p.filter(x=>x.status==='in-progress').length;
+    document.getElementById('s-completed').textContent =p.filter(x=>x.status==='completed').length;
+  }
+ 
+  function renderTable(){
+    const picks =getPickups();
+    const search=document.getElementById('searchInput').value.toLowerCase();
+    const status=document.getElementById('statusFilter').value;
+    const f=picks.filter(p=>{
+      const ms=p.volunteer.toLowerCase().includes(search)||p.ngo.toLowerCase().includes(search)||p.food.toLowerCase().includes(search);
+      const mst=!status||p.status===status;
+      return ms&&mst;
+    });
+    const tbody=document.getElementById('pickupTableBody');
+    if(!f.length){tbody.innerHTML=`<tr class="empty-row"><td colspan="8">No pickups found.</td></tr>`;return;}
+    tbody.innerHTML=f.map((p,i)=>`
+      <tr>
+        <td style="color:var(--muted);font-size:.75rem;">${i+1}</td>
+        <td>🍱 <strong>${p.food}</strong></td>
+        <td>${p.volunteer}</td>
+        <td style="color:var(--muted);">${p.ngo}</td>
+        <td style="color:var(--muted);font-size:.76rem;">${p.time.replace('T',' ')}</td>
+        <td style="color:var(--muted);font-size:.76rem;">📍 ${p.loc}</td>
+        <td><span class="tag ${p.status}">${p.status.replace('-',' ').replace(/\b\w/g,c=>c.toUpperCase())}</span></td>
+        <td>
+          <div class="actions">
+            <button class="ab edit" onclick="editPickup(${p.id})">Edit</button>
+            ${p.status==='scheduled'?`<button class="ab start" onclick="setStatus(${p.id},'in-progress')">Start</button>`:''}
+            ${p.status==='in-progress'?`<button class="ab complete" onclick="setStatus(${p.id},'completed')">Complete</button>`:''}
+            <button class="ab del" onclick="deletePickup(${p.id})">Delete</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+ 
+  function openModal(pre=null){
+    editId=pre?pre.id:null;
+    document.getElementById('modalTitle').textContent=pre?'Edit Pickup':'Schedule Pickup';
+    document.getElementById('f-food').value  =pre?pre.food     :'';
+    document.getElementById('f-vol').value   =pre?pre.volunteer:'';
+    document.getElementById('f-ngo').value   =pre?pre.ngo      :'';
+    document.getElementById('f-loc').value   =pre?pre.loc      :'';
+    document.getElementById('f-time').value  =pre?pre.time     :'';
+    document.getElementById('f-status').value=pre?pre.status   :'scheduled';
+    document.getElementById('modalOverlay').classList.add('show');
+  }
+  function closeModal(){document.getElementById('modalOverlay').classList.remove('show');editId=null;}
+ 
+  function savePickup(){
+    const food     =document.getElementById('f-food').value.trim();
+    const volunteer=document.getElementById('f-vol').value.trim();
+    const ngo      =document.getElementById('f-ngo').value.trim();
+    const loc      =document.getElementById('f-loc').value.trim();
+    const time     =document.getElementById('f-time').value;
+    const status   =document.getElementById('f-status').value;
+    if(!food||!volunteer||!ngo){showToast('⚠️ Food, Volunteer and NGO required!');return;}
+    let picks=getPickups();
+    if(editId){
+      picks=picks.map(p=>p.id===editId?{...p,food,volunteer,ngo,loc,time,status}:p);
+      showToast('✅ Pickup updated!');
+    } else {
+      picks.push({id:nextId(picks),food,volunteer,ngo,loc,time,status});
+      showToast('✅ Pickup scheduled!');
+    }
+    savePickups(picks);closeModal();renderTable();updateStats();
+  }
+ 
+  function editPickup(id){const p=getPickups().find(x=>x.id===id);if(p)openModal(p);}
+  function deletePickup(id){
+    if(!confirm('Delete this pickup?'))return;
+    savePickups(getPickups().filter(p=>p.id!==id));
+    showToast('🗑️ Deleted.');renderTable();updateStats();
+  }
+  function setStatus(id,status){
+    savePickups(getPickups().map(p=>p.id===id?{...p,status}:p));
+    showToast(status==='in-progress'?'🔄 Pickup started!':'✅ Pickup completed!');
+    renderTable();updateStats();
+  }
+  function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+  document.getElementById('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+  seedData();renderTable();updateStats();
+</script>
+</body>
+</html>

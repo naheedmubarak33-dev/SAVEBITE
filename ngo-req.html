@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Requests - Save Bite NGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{--green:#2e7d32;--green-light:#43a047;--green-pale:#e8f5e9;--green-accent:#66bb6a;--gray:#f4f6f4;--text:#1b2e1c;--muted:#6b7c6b;--sw:240px;--shadow:0 2px 12px rgba(46,125,50,.10);}
+  body{font-family:'Poppins',sans-serif;background:var(--gray);color:var(--text);display:flex;}
+  .sidebar{width:var(--sw);background:linear-gradient(180deg,#1b5e20,#2e7d32);min-height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;z-index:100;}
+  .sb-logo{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.12);}
+  .logo-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .logo-row .li{width:34px;height:34px;background:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+  .logo-row h2{color:#fff;font-size:1.1rem;font-weight:700;}.logo-row h2 span{color:#66bb6a;}
+  .ngo-badge{background:rgba(102,187,106,.2);border:1px solid rgba(102,187,106,.35);border-radius:8px;padding:8px 11px;display:flex;align-items:center;gap:9px;}
+  .ngo-ava{width:32px;height:32px;border-radius:8px;background:var(--green-accent);font-size:.95rem;display:flex;align-items:center;justify-content:center;}
+  .ngo-badge-info .nb-name{color:#fff;font-size:.8rem;font-weight:600;}.ngo-badge-info .nb-type{color:rgba(255,255,255,.5);font-size:.67rem;}
+  .sb-nav{padding:14px 0;flex:1;}
+  .nl{color:rgba(255,255,255,.4);font-size:.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:8px 20px 3px;}
+  .ni{display:flex;align-items:center;gap:10px;padding:10px 20px;color:rgba(255,255,255,.78);cursor:pointer;transition:all .2s;font-size:.86rem;border-left:3px solid transparent;text-decoration:none;}
+  .ni:hover,.ni.active{background:rgba(255,255,255,.11);color:#fff;border-left-color:#66bb6a;}
+  .ni .ic{font-size:.95rem;width:18px;text-align:center;}
+  .sb-bot{padding:12px 20px;border-top:1px solid rgba(255,255,255,.12);}
+  .lo{display:flex;align-items:center;gap:9px;cursor:pointer;}.lo span{color:rgba(255,255,255,.6);font-size:.82rem;transition:color .2s;}.lo:hover span{color:#ff6b6b;}
+  .main{margin-left:var(--sw);flex:1;padding:26px 28px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+  .topbar h1{font-size:1.35rem;font-weight:700;}.topbar p{color:var(--muted);font-size:.8rem;margin-top:1px;}
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+  .sc{background:#fff;border-radius:13px;padding:16px;box-shadow:var(--shadow);border:1px solid #eaf3ea;display:flex;align-items:center;gap:13px;}
+  .sc-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+  .ig{background:var(--green-pale)}.io{background:#fff3e0}.ib{background:#e3f2fd}.ir{background:#fce4ec}
+  .sc-info h3{font-size:1.35rem;font-weight:700;}.sc-info p{font-size:.73rem;color:var(--muted);margin-top:1px;}
+  .toolbar{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
+  .search-box{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #dde8dd;border-radius:10px;padding:8px 14px;flex:1;min-width:200px;}
+  .search-box input{border:none;outline:none;font-family:'Poppins',sans-serif;font-size:.82rem;color:var(--text);background:transparent;width:100%;}
+  .filter-select{background:#fff;border:1.5px solid #dde8dd;border-radius:10px;padding:9px 12px;font-family:'Poppins',sans-serif;font-size:.82rem;color:var(--text);outline:none;cursor:pointer;}
+  .panel{background:#fff;border-radius:14px;padding:20px;box-shadow:var(--shadow);border:1px solid #eaf3ea;}
+  .data-table{width:100%;border-collapse:collapse;}
+  .data-table th{font-size:.7rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;padding:8px 10px;text-align:left;border-bottom:1.5px solid #eaf3ea;}
+  .data-table td{padding:11px 10px;font-size:.8rem;border-bottom:1px solid #f2f7f2;vertical-align:middle;}
+  .data-table tr:last-child td{border-bottom:none;}.data-table tr:hover td{background:#f8fdf8;}
+  .tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:600;}
+  .tag.pending{background:#fff8e1;color:#f57f17}.tag.approved{background:#e8f5e9;color:#2e7d32}.tag.rejected{background:#fce4ec;color:#c62828}.tag.fulfilled{background:#e3f2fd;color:#1565c0}
+  .ab{border:none;border-radius:6px;padding:4px 11px;font-family:'Poppins',sans-serif;font-size:.7rem;font-weight:600;cursor:pointer;transition:opacity .2s;}
+  .ab:hover{opacity:.75;}.ab.cancel{background:#fce4ec;color:#c62828;}.ab.view{background:#e3f2fd;color:#1565c0;}
+  .actions{display:flex;gap:5px;}
+  .empty-row td{text-align:center;padding:30px;color:var(--muted);}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#fff;padding:12px 20px;border-radius:10px;font-size:.82rem;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;}
+  .toast.show{opacity:1;transform:translateY(0);}
+  ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:#c8e6c9;border-radius:10px;}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="logo-row"><div class="li">🍱</div><h2>Save <span>Bite</span></h2></div>
+    <div class="ngo-badge"><div class="ngo-ava">🏥</div><div class="ngo-badge-info"><div class="nb-name">Edhi Foundation</div><div class="nb-type">NGO Account</div></div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nl">Menu</div>
+    <a class="ni" href="ngo_dashboard.php"><span class="ic">📊</span> Dashboard</a>
+    <a class="ni active" href="browse_food.php"><span class="ic">🍽️</span> Browse Food</a>
+    <a class="ni" href="my_request.php"><span class="ic">📋</span> My Requests</a>
+    <a class="ni" href="pickup.php"><span class="ic">🚚</span> Pickups</a>
+    <div class="nl" style="margin-top:10px;">Account</div>
+    <a class="ni" href="profile.php"><span class="ic">🏢</span> NGO Profile</a>
+    <a class="ni" href="volunteer.php"><span class="ic">👥</span> Volunteers</a>
+    <a class="ni" href="impact.php"><span class="ic">📈</span> My Impact</a>
+    <a class="ni" href="settings.php"><span class="ic">⚙️</span> Settings</a>
+</nav>
+  <div class="sb-bot"><div class="lo"><span>⏻</span><span>Logout</span></div></div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div><h1>My Food Requests</h1><p>Track the status of all your food claims.</p></div>
+    <a href="broswefood.html" style="background:var(--green);color:#fff;border:none;border-radius:10px;padding:9px 18px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:7px;">🍽️ Browse More Food</a>
+  </div>
+
+  <div class="stats-row">
+    <div class="sc"><div class="sc-icon io">⏳</div><div class="sc-info"><h3 id="s-pending">0</h3><p>Pending</p></div></div>
+    <div class="sc"><div class="sc-icon ig">✅</div><div class="sc-info"><h3 id="s-approved">0</h3><p>Approved</p></div></div>
+    <div class="sc"><div class="sc-icon ib">📦</div><div class="sc-info"><h3 id="s-fulfilled">0</h3><p>Fulfilled</p></div></div>
+    <div class="sc"><div class="sc-icon ir">❌</div><div class="sc-info"><h3 id="s-rejected">0</h3><p>Rejected</p></div></div>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-box">🔍 <input type="text" id="searchInput" placeholder="Search by food name..." oninput="renderTable()"></div>
+    <select class="filter-select" id="statusFilter" onchange="renderTable()">
+      <option value="">All Status</option>
+      <option value="pending">Pending</option>
+      <option value="approved">Approved</option>
+      <option value="fulfilled">Fulfilled</option>
+      <option value="rejected">Rejected</option>
+    </select>
+  </div>
+
+  <div class="panel">
+    <table class="data-table">
+      <thead>
+        <tr><th>#</th><th>Food</th><th>Quantity</th><th>Donor</th><th>Requested On</th><th>Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody id="reqBody"></tbody>
+    </table>
+  </div>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+  function getMyRequests() {
+    const all = JSON.parse(localStorage.getItem('sb_requests') || '[]');
+    return all.filter(r => r.ngo === 'Edhi Foundation');
+  }
+
+  function seedRequests() {
+    const existing = JSON.parse(localStorage.getItem('sb_requests') || '[]');
+    if (existing.some(r => r.ngo === 'Edhi Foundation')) return;
+    const samples = [
+      {id:Date.now()+1,ngo:'Edhi Foundation',food:'Biryani',qty:50,donor:'Ahmed Khan',date:'2026-06-08',status:'approved'},
+      {id:Date.now()+2,ngo:'Edhi Foundation',food:'Bread Loaves',qty:30,donor:'Sara Ali',date:'2026-06-07',status:'fulfilled'},
+      {id:Date.now()+3,ngo:'Edhi Foundation',food:'Dal Chawal',qty:20,donor:'M. Raza',date:'2026-06-06',status:'pending'},
+    ];
+    localStorage.setItem('sb_requests', JSON.stringify([...existing, ...samples]));
+  }
+
+  function updateStats() {
+    const r = getMyRequests();
+    document.getElementById('s-pending').textContent  = r.filter(x=>x.status==='pending').length;
+    document.getElementById('s-approved').textContent = r.filter(x=>x.status==='approved').length;
+    document.getElementById('s-fulfilled').textContent= r.filter(x=>x.status==='fulfilled').length;
+    document.getElementById('s-rejected').textContent = r.filter(x=>x.status==='rejected').length;
+  }
+
+  function renderTable() {
+    const reqs   = getMyRequests();
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const status = document.getElementById('statusFilter').value;
+    const f = reqs.filter(r => {
+      return (!search || r.food.toLowerCase().includes(search)) && (!status || r.status === status);
+    });
+    const tbody = document.getElementById('reqBody');
+    if (!f.length) { tbody.innerHTML=`<tr class="empty-row"><td colspan="7">No requests found.</td></tr>`; return; }
+    tbody.innerHTML = f.map((r,i) => `
+      <tr>
+        <td style="color:var(--muted);font-size:.75rem;">${i+1}</td>
+        <td>🍱 <strong>${r.food}</strong></td>
+        <td>${r.qty} servings</td>
+        <td style="color:var(--muted);">${r.donor}</td>
+        <td style="color:var(--muted);">${r.date}</td>
+        <td><span class="tag ${r.status}">${r.status.charAt(0).toUpperCase()+r.status.slice(1)}</span></td>
+        <td>
+          <div class="actions">
+            ${r.status==='pending'?`<button class="ab cancel" onclick="cancelRequest(${r.id})">Cancel</button>`:''}
+          </div>
+        </td>
+      </tr>`).join('');
+  }
+
+  function cancelRequest(id) {
+    if (!confirm('Cancel this request?')) return;
+    const all = JSON.parse(localStorage.getItem('sb_requests') || '[]');
+    localStorage.setItem('sb_requests', JSON.stringify(all.filter(r => r.id !== id)));
+    showToast('🗑️ Request cancelled.');
+    renderTable(); updateStats();
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  seedRequests(); renderTable(); updateStats();
+</script>
+</body>
+</html>

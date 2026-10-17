@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notifications - Save Bite Donor</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{--green:#2e7d32;--green-light:#43a047;--green-pale:#e8f5e9;--green-accent:#66bb6a;--gray:#f4f6f4;--text:#1b2e1c;--muted:#6b7c6b;--sw:240px;--shadow:0 2px 12px rgba(46,125,50,.10);}
+  body{font-family:'Poppins',sans-serif;background:var(--gray);color:var(--text);display:flex;}
+  .sidebar{width:var(--sw);background:linear-gradient(180deg,#1b5e20,#2e7d32);min-height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;z-index:100;}
+  .sb-logo{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.12);}
+  .logo-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .logo-row .li{width:34px;height:34px;background:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+  .logo-row h2{color:#fff;font-size:1.1rem;font-weight:700;}.logo-row h2 span{color:#66bb6a;}
+  .donor-badge{background:rgba(102,187,106,.2);border:1px solid rgba(102,187,106,.35);border-radius:8px;padding:8px 11px;display:flex;align-items:center;gap:9px;}
+  .d-ava{width:32px;height:32px;border-radius:50%;background:var(--green-accent);font-weight:700;color:#fff;font-size:.8rem;display:flex;align-items:center;justify-content:center;}
+  .donor-badge-info .db-name{color:#fff;font-size:.8rem;font-weight:600;}.donor-badge-info .db-type{color:rgba(255,255,255,.5);font-size:.67rem;}
+  .sb-nav{padding:14px 0;flex:1;}
+  .nl{color:rgba(255,255,255,.4);font-size:.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:8px 20px 3px;}
+  .ni{display:flex;align-items:center;gap:10px;padding:10px 20px;color:rgba(255,255,255,.78);cursor:pointer;transition:all .2s;font-size:.86rem;border-left:3px solid transparent;text-decoration:none;}
+  .ni:hover,.ni.active{background:rgba(255,255,255,.11);color:#fff;border-left-color:#66bb6a;}
+  .ni .ic{font-size:.95rem;width:18px;text-align:center;}
+  .sb-bot{padding:12px 20px;border-top:1px solid rgba(255,255,255,.12);}
+  .lo{display:flex;align-items:center;gap:9px;cursor:pointer;}.lo span{color:rgba(255,255,255,.6);font-size:.82rem;transition:color .2s;}.lo:hover span{color:#ff6b6b;}
+  .main{margin-left:var(--sw);flex:1;padding:26px 28px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+  .topbar h1{font-size:1.35rem;font-weight:700;}.topbar p{color:var(--muted);font-size:.8rem;margin-top:1px;}
+  .btn-outline{background:#fff;color:var(--green);border:1.5px solid #c8e6c9;border-radius:9px;padding:8px 16px;font-family:'Poppins',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;}
+  .btn-outline:hover{background:var(--green-pale);}
+  .panel{background:#fff;border-radius:14px;padding:20px;box-shadow:var(--shadow);border:1px solid #eaf3ea;margin-bottom:16px;}
+  .panel:last-child{margin-bottom:0;}
+  .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .panel-header h3{font-size:.95rem;font-weight:600;}
+
+  /* NOTIFICATION ITEMS */
+  .notif-item{display:flex;align-items:flex-start;gap:13px;padding:13px 0;border-bottom:1px solid #f2f7f2;cursor:pointer;transition:background .2s;border-radius:8px;padding-left:8px;padding-right:8px;}
+  .notif-item:last-child{border-bottom:none;}
+  .notif-item:hover{background:#f8fdf8;}
+  .notif-item.unread{background:#f0fbf0;}
+  .notif-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+  .ni-green{background:var(--green-pale)}.ni-blue{background:#e3f2fd}.ni-orange{background:#fff3e0}.ni-red{background:#fce4ec}
+  .notif-content{flex:1;}
+  .notif-content h4{font-size:.83rem;font-weight:600;margin-bottom:2px;}
+  .notif-content p{font-size:.74rem;color:var(--muted);}
+  .notif-time{font-size:.68rem;color:var(--muted);white-space:nowrap;margin-top:2px;}
+  .unread-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px;}
+
+  .empty-state{text-align:center;padding:40px 20px;color:var(--muted);}
+  .empty-state .ei{font-size:2.5rem;margin-bottom:10px;}
+
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#fff;padding:12px 20px;border-radius:10px;font-size:.82rem;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;}
+  .toast.show{opacity:1;transform:translateY(0);}
+  ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:#c8e6c9;border-radius:10px;}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="logo-row"><div class="li">🍱</div><h2>Save <span>Bite</span></h2></div>
+    <div class="donor-badge"><div class="d-ava">AK</div><div class="donor-badge-info"><div class="db-name">Ahmed Khan</div><div class="db-type">Donor Account</div></div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nl">Menu</div>
+    <a class="nav-item" href="donor/dashboard.php"></a><span class="ic">📊</span> Dashboard</a>
+    <a class="ni" href="donor-donate.html"><span class="ic">🍽️</span> Donate Food</a>
+    <a class="ni" href="donor/my_donations.php"><span class="ic">📋</span> My Donations</a>
+    <a class="ni" href="donor/pickups.php"><span class="ic">🚚</span> Pickup Status</a>
+    <div class="nl" style="margin-top:10px;">Account</div>
+    <a class="ni" href="donor/profile.php"><span class="ic">👤</span> Profile</a>
+    <a class="ni" href="donor/impact.php"><span class="ic">📈</span> My Impact</a>
+    <a class="ni active" href="donor/notifications.php"><span class="ic">🔔</span> Notifications</a>
+  </nav>
+  <div class="sb-bot">
+    <a href="auth/logout.php" style="text-decoration:none;">
+    <div class="lo">
+      <span>⏻</span>
+      <span>Logout</span>
+    </div>
+  </a>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div><h1>Notifications 🔔</h1><p>Stay updated on your donation activity.</p></div>
+    <button class="btn-outline" onclick="markAllRead()">✓ Mark All Read</button>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header"><h3>Today</h3></div>
+    <div class="notif-item unread" onclick="markRead(this)">
+      <div class="notif-icon ni-green">✅</div>
+      <div class="notif-content">
+        <h4>Your Biryani donation was claimed!</h4>
+        <p>Edhi Foundation claimed your 50-plate Biryani donation. Pickup scheduled for 3:00 PM today.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <div class="notif-time">2:30 PM</div>
+        <div class="unread-dot"></div>
+      </div>
+    </div>
+    <div class="notif-item unread" onclick="markRead(this)">
+      <div class="notif-icon ni-blue">🚚</div>
+      <div class="notif-content">
+        <h4>Volunteer assigned for pickup</h4>
+        <p>Ali Khan will pick up your Biryani donation. Contact: +92 300 1111111</p>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <div class="notif-time">2:45 PM</div>
+        <div class="unread-dot"></div>
+      </div>
+    </div>
+    <div class="notif-item unread" onclick="markRead(this)">
+      <div class="notif-icon ni-orange">⚠️</div>
+      <div class="notif-content">
+        <h4>Samosa donation expiring in 2 hours!</h4>
+        <p>Your Samosa donation (100 pcs) will expire at 5:00 PM. No NGO has claimed it yet.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <div class="notif-time">3:00 PM</div>
+        <div class="unread-dot"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header"><h3>Yesterday</h3></div>
+    <div class="notif-item" onclick="markRead(this)">
+      <div class="notif-icon ni-green">🏆</div>
+      <div class="notif-content">
+        <h4>You earned the Top Donor badge!</h4>
+        <p>Congratulations! You are the top donor for June 2026. Keep it up!</p>
+      </div>
+      <div class="notif-time">Jun 7, 6:00 PM</div>
+    </div>
+    <div class="notif-item" onclick="markRead(this)">
+      <div class="notif-icon ni-blue">📦</div>
+      <div class="notif-content">
+        <h4>Bread Loaves pickup completed</h4>
+        <p>Sara Raza successfully picked up your 30 bread loaves for Edhi Foundation.</p>
+      </div>
+      <div class="notif-time">Jun 7, 11:30 AM</div>
+    </div>
+    <div class="notif-item" onclick="markRead(this)">
+      <div class="notif-icon ni-red">❌</div>
+      <div class="notif-content">
+        <h4>Cake donation expired</h4>
+        <p>Your 8 cake boxes donation expired without being claimed. Please post earlier next time.</p>
+      </div>
+      <div class="notif-time">Jun 4, 10:00 AM</div>
+    </div>
+  </div>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+  function markRead(el){
+    el.classList.remove('unread');
+    const dot=el.querySelector('.unread-dot');
+    if(dot)dot.remove();
+  }
+  function markAllRead(){
+    document.querySelectorAll('.notif-item.unread').forEach(el=>markRead(el));
+    showToast('✅ All notifications marked as read.');
+  }
+  function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+</script>
+</body>
+</html>

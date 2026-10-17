@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Donate Food - Save Bite</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{--green:#2e7d32;--green-light:#43a047;--green-pale:#e8f5e9;--green-accent:#66bb6a;--gray:#f4f6f4;--text:#1b2e1c;--muted:#6b7c6b;--sw:240px;--shadow:0 2px 12px rgba(46,125,50,.10);}
+  body{font-family:'Poppins',sans-serif;background:var(--gray);color:var(--text);display:flex;}
+
+  /* SIDEBAR */
+  .sidebar{width:var(--sw);background:linear-gradient(180deg,#1b5e20,#2e7d32);min-height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;z-index:100;}
+  .sb-logo{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.12);}
+  .logo-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .logo-row .li{width:34px;height:34px;background:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+  .logo-row h2{color:#fff;font-size:1.1rem;font-weight:700;}.logo-row h2 span{color:#66bb6a;}
+  .donor-badge{background:rgba(102,187,106,.2);border:1px solid rgba(102,187,106,.35);border-radius:8px;padding:8px 11px;display:flex;align-items:center;gap:9px;}
+  .d-ava{width:32px;height:32px;border-radius:50%;background:var(--green-accent);font-weight:700;color:#fff;font-size:.8rem;display:flex;align-items:center;justify-content:center;}
+  .donor-badge-info .db-name{color:#fff;font-size:.8rem;font-weight:600;}.donor-badge-info .db-type{color:rgba(255,255,255,.5);font-size:.67rem;}
+  .sb-nav{padding:14px 0;flex:1;}
+  .nl{color:rgba(255,255,255,.4);font-size:.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:8px 20px 3px;}
+  .ni{display:flex;align-items:center;gap:10px;padding:10px 20px;color:rgba(255,255,255,.78);cursor:pointer;transition:all .2s;font-size:.86rem;border-left:3px solid transparent;text-decoration:none;}
+  .ni:hover,.ni.active{background:rgba(255,255,255,.11);color:#fff;border-left-color:#66bb6a;}
+  .ni .ic{font-size:.95rem;width:18px;text-align:center;}
+  .sb-bot{padding:12px 20px;border-top:1px solid rgba(255,255,255,.12);}
+  .lo{display:flex;align-items:center;gap:9px;cursor:pointer;}.lo span{color:rgba(255,255,255,.6);font-size:.82rem;transition:color .2s;}.lo:hover span{color:#ff6b6b;}
+
+  /* MAIN */
+  .main{margin-left:var(--sw);flex:1;padding:26px 28px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+  .topbar h1{font-size:1.35rem;font-weight:700;}.topbar p{color:var(--muted);font-size:.8rem;margin-top:1px;}
+
+  .layout{display:grid;grid-template-columns:1.4fr 1fr;gap:22px;align-items:start;}
+
+  /* FORM PANEL */
+  .panel{background:#fff;border-radius:14px;padding:24px;box-shadow:var(--shadow);border:1px solid #eaf3ea;}
+  .panel-title{font-size:1rem;font-weight:700;margin-bottom:4px;}
+  .panel-desc{font-size:.78rem;color:var(--muted);margin-bottom:20px;}
+
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .fg{display:flex;flex-direction:column;gap:5px;}
+  .fg.full{grid-column:1/-1;}
+  .fg label{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+  .fg input,.fg select,.fg textarea{border:1.5px solid #dde8dd;border-radius:9px;padding:10px 13px;font-family:'Poppins',sans-serif;font-size:.83rem;color:var(--text);outline:none;transition:border-color .2s;background:#fff;}
+  .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--green-accent);}
+  .fg textarea{resize:vertical;min-height:80px;}
+
+  .submit-btn{width:100%;margin-top:18px;background:var(--green);color:#fff;border:none;border-radius:10px;padding:12px 0;font-family:'Poppins',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:background .2s;}
+  .submit-btn:hover{background:var(--green-light);}
+
+  /* RIGHT SIDE */
+  .tips-panel{background:#fff;border-radius:14px;padding:20px;box-shadow:var(--shadow);border:1px solid #eaf3ea;margin-bottom:16px;}
+  .tips-panel h3{font-size:.9rem;font-weight:700;margin-bottom:14px;}
+  .tip-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid #f2f7f2;}
+  .tip-item:last-child{border-bottom:none;}
+  .tip-icon{width:30px;height:30px;border-radius:8px;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;}
+  .tip-text .tt{font-size:.81rem;font-weight:600;}
+  .tip-text .td{font-size:.72rem;color:var(--muted);margin-top:1px;}
+
+  .recent-panel{background:#fff;border-radius:14px;padding:20px;box-shadow:var(--shadow);border:1px solid #eaf3ea;}
+  .recent-panel h3{font-size:.9rem;font-weight:700;margin-bottom:14px;}
+  .ri{display:flex;align-items:center;gap:11px;padding:8px 0;border-bottom:1px solid #f2f7f2;}
+  .ri:last-child{border-bottom:none;}
+  .ri-icon{width:36px;height:36px;border-radius:9px;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+  .ri-info{flex:1;}
+  .ri-info .rn{font-size:.82rem;font-weight:600;}
+  .ri-info .rm{font-size:.71rem;color:var(--muted);margin-top:1px;}
+  .tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:.67rem;font-weight:600;}
+  .tag.available{background:#e8f5e9;color:#2e7d32}.tag.claimed{background:#e3f2fd;color:#1565c0}.tag.pending{background:#fff8e1;color:#f57f17}.tag.expired{background:#fce4ec;color:#c62828}
+
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#fff;padding:12px 20px;border-radius:10px;font-size:.82rem;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;}
+  .toast.show{opacity:1;transform:translateY(0);}
+  ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:#c8e6c9;border-radius:10px;}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="logo-row"><div class="li">🍱</div><h2>Save <span>Bite</span></h2></div>
+    <div class="donor-badge"><div class="d-ava">AK</div><div class="donor-badge-info"><div class="db-name">Ahmed Khan</div><div class="db-type">Donor Account</div></div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nl">Menu</div>
+    <a class="ni" href="donor/dashboard.php"><span class="ic">📊</span> Dashboard</a>
+    <a class="ni active" href="donor/add_donation.php"><span class="ic">🍽️</span> Donate Food</a>
+    <a class="ni" href="donor/my_donations.php"><span class="ic">📋</span> My Donations</a>
+    <a class="ni" href="donor/pickups.php"><span class="ic">🚚</span> Pickup Status</a>
+    <div class="nl" style="margin-top:10px;">Account</div>
+    <a class="ni" href="donor/profile.php"><span class="ic">👤</span> Profile</a>
+    <a class="ni" href="donor-impact.html"><span class="ic">📈</span> My Impact</a>
+    <a class="ni" href="donor-notifications.html"><span class="ic">🔔</span> Notifications</a>
+    <a class="ni" href="donor-settings.html"><span class="ic">⚙️</span> Settings</a>
+  </nav>
+  <div class="sb-bot">
+    <a href="auth/logout.php" style="text-decoration:none;">
+    <div class="lo">
+      <span>⏻</span>
+      <span>Logout</span
+        ></div>
+</a>
+      </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div><h1>Donate Food 🍱</h1><p>Fill in the details to post a new food donation.</p></div>
+  </div>
+
+  <div class="layout">
+
+    <!-- DONATION FORM -->
+     <form action="donor/add_donation.php" method="POST">
+    <div class="panel">
+      <div class="panel-title">New Food Donation</div>
+      <div class="panel-desc">All fields marked are required. Your donation will be visible to NGOs immediately.</div>
+
+      <div class="form-grid">
+        <div class="fg">
+          <label>Food Name *</label>
+          <input type="text" id="f-food" name="food_name" placeholder="e.g. Biryani, Bread...">
+        </div>
+        <div class="fg">
+          <label>Category *</label>
+          <select id="f-cat" name="category">
+            <option value="">Select Category</option>
+            <option>Cooked Meal</option>
+            <option>Bakery Items</option>
+            <option>Raw Groceries</option>
+            <option>Fruits & Vegetables</option>
+            <option>Drinks / Beverages</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Quantity *</label>
+          <input type="number" id="f-qty" name="quantity" placeholder="e.g. 10 plates">
+        </div>
+        <div class="fg">
+          <label>Serves (People)</label>
+          <input type="number" id="f-serves" name="serves" placeholder="Approx. people">
+        </div>
+        <div class="fg full">
+          <label>Pickup Location *</label>
+          <input type="text" id="f-loc" name="location" placeholder="Full address for pickup">
+        </div>
+        <div class="fg">
+          <label>Expiry / Pickup Time *</label>
+             <input type="datetime-local" id="f-expiry" name="expiry_time">     
+   </div>
+        <div class="fg">
+          <label>Contact Number *</label>
+          <input type="tel" id="f-phone" name="contact_phone" placeholder="+92 300 0000000">
+        </div>
+        <div class="fg full">
+          <label>Additional Notes</label>
+          <textarea id="f-notes" name="notes" placeholder="Any special instructions, packaging info, etc..."></textarea>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn">🍱 Submit Donation</button>
+    </div>
+     </form>
+    <!-- RIGHT SIDE -->
+    <div>
+      <div class="tips-panel">
+        <h3>💡 Donation Tips</h3>
+        <div class="tip-item">
+          <div class="tip-icon">⏰</div>
+          <div class="tip-text"><div class="tt">Post Early</div><div class="td">List at least 2 hours before expiry for better pickup chances.</div></div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-icon">📍</div>
+          <div class="tip-text"><div class="tt">Accurate Location</div><div class="td">Add a clear and complete pickup address.</div></div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-icon">📦</div>
+          <div class="tip-text"><div class="tt">Pack Properly</div><div class="td">Keep food covered and properly packed before pickup.</div></div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-icon">📞</div>
+          <div class="tip-text"><div class="tt">Stay Reachable</div><div class="td">Keep your contact number updated so NGOs can reach you.</div></div>
+        </div>
+      </div>
+
+      <div class="recent-panel">
+        <h3>🕐 My Recent Donations</h3>
+        <div id="recentList"></div>
+      </div>
+    </div>
+
+  </div>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+  const EMOJI = {'Cooked Meal':'🍛','Bakery Items':'🍞','Raw Groceries':'🥫','Fruits & Vegetables':'🥦','Drinks / Beverages':'🥤','Other':'🍱',''  :'🍱'};
+
+  function getDonations(){ return JSON.parse(localStorage.getItem('sb_my_donations')||'[]'); }
+  function saveDonations(arr){ localStorage.setItem('sb_my_donations',JSON.stringify(arr)); }
+
+  function seedDonations(){
+    if(localStorage.getItem('sb_my_donations'))return;
+    saveDonations([
+      {id:1,food:'Biryani',cat:'Cooked Meal',qty:50,serves:200,loc:'Gulshan, Karachi',expiry:'2026-06-08T18:00',phone:'+92 300 1111111',notes:'',date:'2026-06-08',status:'available'},
+      {id:2,food:'Bread Loaves',cat:'Bakery Items',qty:30,serves:60,loc:'DHA, Karachi',expiry:'2026-06-07T16:00',phone:'+92 300 1111111',notes:'Keep dry',date:'2026-06-07',status:'claimed'},
+      {id:3,food:'Dal Chawal',cat:'Cooked Meal',qty:20,serves:80,loc:'North Nazimabad',expiry:'2026-06-06T12:00',phone:'+92 300 1111111',notes:'',date:'2026-06-06',status:'claimed'},
+    ]);
+  }
+
+  function renderRecent(){
+    const dons = getDonations().slice(-4).reverse();
+    const el   = document.getElementById('recentList');
+    if(!dons.length){ el.innerHTML='<p style="font-size:.78rem;color:var(--muted);text-align:center;padding:14px 0;">No donations yet.</p>'; return; }
+    el.innerHTML = dons.map(d=>`
+      <div class="ri">
+        <div class="ri-icon">${EMOJI[d.cat]||'🍱'}</div>
+        <div class="ri-info">
+          <div class="rn">${d.food} — ${d.qty} pcs</div>
+          <div class="rm">📍 ${d.loc} · ${d.date}</div>
+        </div>
+        <span class="tag ${d.status}">${d.status.charAt(0).toUpperCase()+d.status.slice(1)}</span>
+      </div>`).join('');
+  }
+
+  function submitDonation(){
+    const food   = document.getElementById('f-food').value.trim();
+    const cat    = document.getElementById('f-cat').value;
+    const qty    = document.getElementById('f-qty').value;
+    const serves = document.getElementById('f-serves').value;
+    const loc    = document.getElementById('f-loc').value.trim();
+    const expiry = document.getElementById('f-expiry').value;
+    const phone  = document.getElementById('f-phone').value.trim();
+    const notes  = document.getElementById('f-notes').value.trim();
+
+    if(!food||!cat||!qty||!loc||!expiry||!phone){ showToast('⚠️ Please fill all required fields!'); return; }
+
+    const dons = getDonations();
+    const id   = dons.length ? Math.max(...dons.map(d=>d.id))+1 : 1;
+    dons.push({id,food,cat,qty:Number(qty),serves:Number(serves)||0,loc,expiry,phone,notes,date:new Date().toISOString().slice(0,10),status:'available'});
+    saveDonations(dons);
+
+    // Also add to shared donations for NGO
+    const shared = JSON.parse(localStorage.getItem('sb_donations')||'[]');
+    shared.push({id:id+1000,food,cat,qty:Number(qty),donor:'Ahmed Khan',loc,expiry,status:'available',notes,date:new Date().toISOString().slice(0,10)});
+    localStorage.setItem('sb_donations',JSON.stringify(shared));
+
+    // Reset form
+    ['f-food','f-qty','f-serves','f-loc','f-expiry','f-phone','f-notes'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('f-cat').value='';
+
+    renderRecent();
+    showToast('✅ Donation submitted successfully!');
+  }
+
+  function showToast(msg){
+    const t=document.getElementById('toast');
+    t.textContent=msg; t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),2800);
+  }
+
+  seedDonations(); renderRecent();
+</script>
+</body>
+</html>

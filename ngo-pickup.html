@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pickups - Save Bite NGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{--green:#2e7d32;--green-light:#43a047;--green-pale:#e8f5e9;--green-accent:#66bb6a;--gray:#f4f6f4;--text:#1b2e1c;--muted:#6b7c6b;--sw:240px;--shadow:0 2px 12px rgba(46,125,50,.10);}
+  body{font-family:'Poppins',sans-serif;background:var(--gray);color:var(--text);display:flex;}
+  .sidebar{width:var(--sw);background:linear-gradient(180deg,#1b5e20,#2e7d32);min-height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;z-index:100;}
+  .sb-logo{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.12);}
+  .logo-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .logo-row .li{width:34px;height:34px;background:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+  .logo-row h2{color:#fff;font-size:1.1rem;font-weight:700;}.logo-row h2 span{color:#66bb6a;}
+  .ngo-badge{background:rgba(102,187,106,.2);border:1px solid rgba(102,187,106,.35);border-radius:8px;padding:8px 11px;display:flex;align-items:center;gap:9px;}
+  .ngo-ava{width:32px;height:32px;border-radius:8px;background:var(--green-accent);font-size:.95rem;display:flex;align-items:center;justify-content:center;}
+  .ngo-badge-info .nb-name{color:#fff;font-size:.8rem;font-weight:600;}.ngo-badge-info .nb-type{color:rgba(255,255,255,.5);font-size:.67rem;}
+  .sb-nav{padding:14px 0;flex:1;}
+  .nl{color:rgba(255,255,255,.4);font-size:.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:8px 20px 3px;}
+  .ni{display:flex;align-items:center;gap:10px;padding:10px 20px;color:rgba(255,255,255,.78);cursor:pointer;transition:all .2s;font-size:.86rem;border-left:3px solid transparent;text-decoration:none;}
+  .ni:hover,.ni.active{background:rgba(255,255,255,.11);color:#fff;border-left-color:#66bb6a;}
+  .ni .ic{font-size:.95rem;width:18px;text-align:center;}
+  .sb-bot{padding:12px 20px;border-top:1px solid rgba(255,255,255,.12);}
+  .lo{display:flex;align-items:center;gap:9px;cursor:pointer;}.lo span{color:rgba(255,255,255,.6);font-size:.82rem;transition:color .2s;}.lo:hover span{color:#ff6b6b;}
+  .main{margin-left:var(--sw);flex:1;padding:26px 28px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+  .topbar h1{font-size:1.35rem;font-weight:700;}.topbar p{color:var(--muted);font-size:.8rem;margin-top:1px;}
+  .btn-primary{background:var(--green);color:#fff;border:none;border-radius:10px;padding:9px 18px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;transition:background .2s;}
+  .btn-primary:hover{background:var(--green-light);}
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+  .sc{background:#fff;border-radius:13px;padding:16px;box-shadow:var(--shadow);border:1px solid #eaf3ea;display:flex;align-items:center;gap:13px;}
+  .sc-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+  .ig{background:var(--green-pale)}.io{background:#fff3e0}.ib{background:#e3f2fd}.ir{background:#fce4ec}
+  .sc-info h3{font-size:1.35rem;font-weight:700;}.sc-info p{font-size:.73rem;color:var(--muted);margin-top:1px;}
+  .panel{background:#fff;border-radius:14px;padding:20px;box-shadow:var(--shadow);border:1px solid #eaf3ea;margin-bottom:18px;}
+  .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .panel-header h3{font-size:.95rem;font-weight:600;}
+  .data-table{width:100%;border-collapse:collapse;}
+  .data-table th{font-size:.7rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;padding:8px 10px;text-align:left;border-bottom:1.5px solid #eaf3ea;}
+  .data-table td{padding:11px 10px;font-size:.8rem;border-bottom:1px solid #f2f7f2;vertical-align:middle;}
+  .data-table tr:last-child td{border-bottom:none;}.data-table tr:hover td{background:#f8fdf8;}
+  .tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:600;}
+  .tag.scheduled{background:#e8f5e9;color:#2e7d32}.tag.in-progress{background:#fff8e1;color:#f57f17}.tag.completed{background:#e3f2fd;color:#1565c0}.tag.failed{background:#fce4ec;color:#c62828}
+  .ab{border:none;border-radius:6px;padding:4px 11px;font-family:'Poppins',sans-serif;font-size:.7rem;font-weight:600;cursor:pointer;transition:opacity .2s;}
+  .ab:hover{opacity:.75;}.ab.complete{background:#e8f5e9;color:#2e7d32;}.ab.start{background:#fff8e1;color:#f57f17;}
+  .empty-row td{text-align:center;padding:30px;color:var(--muted);}
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;}
+  .modal-overlay.show{display:flex;}
+  .modal{background:#fff;border-radius:16px;padding:28px;width:100%;max-width:460px;box-shadow:0 8px 40px rgba(0,0,0,.18);}
+  .modal h3{font-size:1.05rem;font-weight:700;margin-bottom:18px;}
+  .fg{display:flex;flex-direction:column;gap:5px;margin-bottom:13px;}
+  .fg label{font-size:.73rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+  .fg input,.fg select{border:1.5px solid #dde8dd;border-radius:9px;padding:9px 12px;font-family:'Poppins',sans-serif;font-size:.82rem;color:var(--text);outline:none;transition:border-color .2s;}
+  .fg input:focus,.fg select:focus{border-color:var(--green-accent);}
+  .fg-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .modal-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:4px;}
+  .btn-cancel{background:#f4f6f4;color:var(--text);border:none;border-radius:9px;padding:9px 18px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;}
+  .btn-save{background:var(--green);color:#fff;border:none;border-radius:9px;padding:9px 20px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:background .2s;}
+  .btn-save:hover{background:var(--green-light);}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#fff;padding:12px 20px;border-radius:10px;font-size:.82rem;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;}
+  .toast.show{opacity:1;transform:translateY(0);}
+  ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:#c8e6c9;border-radius:10px;}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="logo-row"><div class="li">🍱</div><h2>Save <span>Bite</span></h2></div>
+    <div class="ngo-badge"><div class="ngo-ava">🏥</div><div class="ngo-badge-info"><div class="nb-name">Edhi Foundation</div><div class="nb-type">NGO Account</div></div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nl">Menu</div>
+    <a class="ni" href="ngo_dashboard.php"><span class="ic">📊</span> Dashboard</a>
+    <a class="ni active" href="browse_food.php"><span class="ic">🍽️</span> Browse Food</a>
+    <a class="ni" href="my_request.php"><span class="ic">📋</span> My Requests</a>
+    <a class="ni" href="pickup.php"><span class="ic">🚚</span> Pickups</a>
+    <div class="nl" style="margin-top:10px;">Account</div>
+    <a class="ni" href="profile.php"><span class="ic">🏢</span> NGO Profile</a>
+    <a class="ni" href="voluneter.php"><span class="ic">👥</span> Volunteers</a>
+    <a class="ni" href="impact.php"><span class="ic">📈</span> My Impact</a>
+    <a class="ni" href="settings.php"><span class="ic">⚙️</span> Settings</a>
+</nav>
+  <div class="sb-bot"><div class="lo"><span>⏻</span><span>Logout</span></div></div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div><h1>Pickup Management</h1><p>Track and manage all food pickups assigned to your NGO.</p></div>
+    <button class="btn-primary" onclick="openModal()">➕ Schedule Pickup</button>
+  </div>
+
+  <div class="stats-row">
+    <div class="sc"><div class="sc-icon ig">🚚</div><div class="sc-info"><h3 id="s-total">0</h3><p>Total Pickups</p></div></div>
+    <div class="sc"><div class="sc-icon ig">📅</div><div class="sc-info"><h3 id="s-scheduled">0</h3><p>Scheduled</p></div></div>
+    <div class="sc"><div class="sc-icon io">🔄</div><div class="sc-info"><h3 id="s-inprog">0</h3><p>In Progress</p></div></div>
+    <div class="sc"><div class="sc-icon ib">✅</div><div class="sc-info"><h3 id="s-done">0</h3><p>Completed</p></div></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header"><h3>All Pickups</h3></div>
+    <table class="data-table">
+      <thead><tr><th>#</th><th>Food</th><th>Volunteer</th><th>Location</th><th>Time</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody id="pickupBody"></tbody>
+    </table>
+  </div>
+</main>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3>Schedule Pickup 🚚</h3>
+    <div class="fg"><label>Food Item</label><input type="text" id="f-food" placeholder="Food name"></div>
+    <div class="fg-row">
+      <div class="fg"><label>Volunteer</label><input type="text" id="f-vol" placeholder="Volunteer name"></div>
+      <div class="fg"><label>Pickup Time</label><input type="datetime-local" id="f-time"></div>
+    </div>
+    <div class="fg"><label>Pickup Location</label><input type="text" id="f-loc" placeholder="Address"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="savePickup()">Save</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+  let editId = null;
+
+  function seed() {
+    if (localStorage.getItem('sb_ngo_pickups')) return;
+    localStorage.setItem('sb_ngo_pickups', JSON.stringify([
+      {id:1,food:'Biryani',volunteer:'Ali Khan',loc:'Gulshan, Karachi',time:'2026-06-08T15:00',status:'scheduled'},
+      {id:2,food:'Bread',volunteer:'Sara Raza',loc:'DHA, Karachi',time:'2026-06-08T11:00',status:'completed'},
+      {id:3,food:'Dal Chawal',volunteer:'M. Naveed',loc:'North Nazimabad',time:'2026-06-09T12:00',status:'in-progress'},
+      {id:4,food:'Samosa',volunteer:'Zara Aslam',loc:'Saddar, Karachi',time:'2026-06-08T17:00',status:'scheduled'},
+    ]));
+  }
+
+  function getPickups() { return JSON.parse(localStorage.getItem('sb_ngo_pickups') || '[]'); }
+  function savePickups(arr) { localStorage.setItem('sb_ngo_pickups', JSON.stringify(arr)); }
+  function nextId(arr) { return arr.length ? Math.max(...arr.map(x=>x.id))+1 : 1; }
+
+  function updateStats() {
+    const p = getPickups();
+    document.getElementById('s-total').textContent    = p.length;
+    document.getElementById('s-scheduled').textContent = p.filter(x=>x.status==='scheduled').length;
+    document.getElementById('s-inprog').textContent   = p.filter(x=>x.status==='in-progress').length;
+    document.getElementById('s-done').textContent     = p.filter(x=>x.status==='completed').length;
+  }
+
+  function renderTable() {
+    const picks = getPickups();
+    const tbody = document.getElementById('pickupBody');
+    if (!picks.length) { tbody.innerHTML=`<tr class="empty-row"><td colspan="7">No pickups yet.</td></tr>`; return; }
+    tbody.innerHTML = picks.map((p,i) => `
+      <tr>
+        <td style="color:var(--muted);font-size:.75rem;">${i+1}</td>
+        <td>🍱 <strong>${p.food}</strong></td>
+        <td>${p.volunteer}</td>
+        <td style="color:var(--muted);font-size:.76rem;">📍 ${p.loc}</td>
+        <td style="color:var(--muted);font-size:.76rem;">${p.time.replace('T',' ')}</td>
+        <td><span class="tag ${p.status}">${p.status.replace('-',' ').replace(/\b\w/g,c=>c.toUpperCase())}</span></td>
+        <td>
+          ${p.status==='scheduled'?`<button class="ab start" onclick="setStatus(${p.id},'in-progress')">Start</button>`:''}
+          ${p.status==='in-progress'?`<button class="ab complete" onclick="setStatus(${p.id},'completed')">Complete</button>`:''}
+        </td>
+      </tr>`).join('');
+  }
+
+  function openModal() { document.getElementById('modalOverlay').classList.add('show'); }
+  function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
+
+  function savePickup() {
+    const food = document.getElementById('f-food').value.trim();
+    const vol  = document.getElementById('f-vol').value.trim();
+    const time = document.getElementById('f-time').value;
+    const loc  = document.getElementById('f-loc').value.trim();
+    if (!food||!vol) { showToast('⚠️ Food and volunteer required!'); return; }
+    const arr = getPickups();
+    arr.push({id:nextId(arr),food,volunteer:vol,loc,time,status:'scheduled'});
+    savePickups(arr); closeModal(); renderTable(); updateStats();
+    showToast('✅ Pickup scheduled!');
+  }
+
+  function setStatus(id, status) {
+    savePickups(getPickups().map(p=>p.id===id?{...p,status}:p));
+    showToast(status==='in-progress'?'🔄 Pickup started!':'✅ Pickup completed!');
+    renderTable(); updateStats();
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent=msg; t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),2800);
+  }
+
+  document.getElementById('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+  seed(); renderTable(); updateStats();
+</script>
+</body>
+</html>

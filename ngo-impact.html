@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Impact - Save Bite NGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{--green:#2e7d32;--green-light:#43a047;--green-pale:#e8f5e9;--green-accent:#66bb6a;--gray:#f4f6f4;--text:#1b2e1c;--muted:#6b7c6b;--sw:240px;--shadow:0 2px 12px rgba(46,125,50,.10);}
+  body{font-family:'Poppins',sans-serif;background:var(--gray);color:var(--text);display:flex;}
+  .sidebar{width:var(--sw);background:linear-gradient(180deg,#1b5e20,#2e7d32);min-height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;z-index:100;}
+  .sb-logo{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.12);}
+  .logo-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .logo-row .li{width:34px;height:34px;background:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+  .logo-row h2{color:#fff;font-size:1.1rem;font-weight:700;}.logo-row h2 span{color:#66bb6a;}
+  .ngo-badge{background:rgba(102,187,106,.2);border:1px solid rgba(102,187,106,.35);border-radius:8px;padding:8px 11px;display:flex;align-items:center;gap:9px;}
+  .ngo-ava{width:32px;height:32px;border-radius:8px;background:var(--green-accent);font-size:.95rem;display:flex;align-items:center;justify-content:center;}
+  .ngo-badge-info .nb-name{color:#fff;font-size:.8rem;font-weight:600;}.ngo-badge-info .nb-type{color:rgba(255,255,255,.5);font-size:.67rem;}
+  .sb-nav{padding:14px 0;flex:1;}
+  .nl{color:rgba(255,255,255,.4);font-size:.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:8px 20px 3px;}
+  .ni{display:flex;align-items:center;gap:10px;padding:10px 20px;color:rgba(255,255,255,.78);cursor:pointer;transition:all .2s;font-size:.86rem;border-left:3px solid transparent;text-decoration:none;}
+  .ni:hover,.ni.active{background:rgba(255,255,255,.11);color:#fff;border-left-color:#66bb6a;}
+  .ni .ic{font-size:.95rem;width:18px;text-align:center;}
+  .sb-bot{padding:12px 20px;border-top:1px solid rgba(255,255,255,.12);}
+  .lo{display:flex;align-items:center;gap:9px;cursor:pointer;}.lo span{color:rgba(255,255,255,.6);font-size:.82rem;transition:color .2s;}.lo:hover span{color:#ff6b6b;}
+  .main{margin-left:var(--sw);flex:1;padding:26px 28px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+  .topbar h1{font-size:1.35rem;font-weight:700;}.topbar p{color:var(--muted);font-size:.8rem;margin-top:1px;}
+
+  /* IMPACT HERO */
+  .impact-hero{background:linear-gradient(135deg,#1b5e20,#43a047);border-radius:16px;padding:28px;margin-bottom:22px;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+  .ih-card{text-align:center;}
+  .ih-card h2{color:#fff;font-size:2rem;font-weight:800;}
+  .ih-card p{color:rgba(255,255,255,.75);font-size:.78rem;margin-top:4px;}
+
+  .row-2{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;margin-bottom:18px;}
+  .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:18px;}
+  .panel{background:#fff;border-radius:14px;padding:22px;box-shadow:var(--shadow);border:1px solid #eaf3ea;}
+  .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .panel-header h3{font-size:.95rem;font-weight:600;}
+
+  /* BAR CHART */
+  .bar-wrap{display:flex;align-items:flex-end;gap:8px;height:120px;}
+  .bc{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
+  .bv{font-size:.65rem;font-weight:700;color:var(--green);}
+  .bb{width:100%;border-radius:6px 6px 0 0;transition:all .5s;}
+  .bl{font-size:.63rem;color:var(--muted);}
+
+  /* PROGRESS */
+  .prog-item{margin-bottom:14px;}
+  .prog-item:last-child{margin-bottom:0;}
+  .prog-label{display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:5px;}
+  .prog-label span:last-child{font-weight:700;color:var(--green);}
+  .prog-track{background:#eaf3ea;border-radius:20px;height:9px;}
+  .prog-fill{height:100%;border-radius:20px;background:var(--green-light);}
+
+  /* BADGES */
+  .badges-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .badge-card{background:var(--green-pale);border-radius:12px;padding:16px;text-align:center;border:1.5px solid #c8e6c9;}
+  .badge-card .bc-icon{font-size:2rem;margin-bottom:6px;}
+  .badge-card .bc-name{font-size:.82rem;font-weight:700;color:var(--green);}
+  .badge-card .bc-desc{font-size:.7rem;color:var(--muted);margin-top:2px;}
+  .badge-card.locked{background:#f4f6f4;border-color:#e0e0e0;opacity:.6;}
+  .badge-card.locked .bc-name{color:var(--muted);}
+
+  /* MILESTONES */
+  .milestone-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f2f7f2;}
+  .milestone-item:last-child{border-bottom:none;}
+  .mi-icon{width:36px;height:36px;border-radius:50%;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;}
+  .mi-info{flex:1;}
+  .mi-info h4{font-size:.83rem;font-weight:600;}
+  .mi-info p{font-size:.72rem;color:var(--muted);margin-top:1px;}
+  .mi-check{font-size:1rem;}
+
+  ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:#c8e6c9;border-radius:10px;}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="logo-row"><div class="li">🍱</div><h2>Save <span>Bite</span></h2></div>
+    <div class="ngo-badge"><div class="ngo-ava">🏥</div><div class="ngo-badge-info"><div class="nb-name">Edhi Foundation</div><div class="nb-type">NGO Account</div></div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nl">Menu</div>
+    <a class="ni" href="ngo_dashboard.php"><span class="ic">📊</span> Dashboard</a>
+    <a class="ni active" href="browse_food.php"><span class="ic">🍽️</span> Browse Food</a>
+    <a class="ni" href="my_request.php"><span class="ic">📋</span> My Requests</a>
+    <a class="ni" href="pickup.php"><span class="ic">🚚</span> Pickups</a>
+    <div class="nl" style="margin-top:10px;">Account</div>
+    <a class="ni" href="profile.php"><span class="ic">🏢</span> NGO Profile</a>
+    <a class="ni" href="volunteer.php"><span class="ic">👥</span> Volunteers</a>
+    <a class="ni" href="impact.php"><span class="ic">📈</span> My Impact</a>
+    <a class="ni" href="settings.php"><span class="ic">⚙️</span> Settings</a>
+</nav>
+  <div class="sb-bot"><div class="lo"><span>⏻</span><span>Logout</span></div></div>
+</aside>
+
+<main class="main">
+  <div class="topbar"><div><h1>My Impact</h1><p>See the difference your NGO is making.</p></div></div>
+
+  <!-- HERO STATS -->
+  <div class="impact-hero">
+    <div class="ih-card"><h2>2,400</h2><p>🍽️ Total Meals</p></div>
+    <div class="ih-card"><h2>142</h2><p>📦 Food Claims</p></div>
+    <div class="ih-card"><h2>38</h2><p>🚚 Pickups Done</p></div>
+    <div class="ih-card"><h2>18</h2><p>👥 Volunteers</p></div>
+  </div>
+
+  <div class="row-2">
+    <!-- MONTHLY CHART -->
+    <div class="panel">
+      <div class="panel-header"><h3>Monthly Meals Distributed</h3></div>
+      <div class="bar-wrap" id="barChart"></div>
+      <div style="display:flex;justify-content:space-between;margin-top:8px;">
+        <span style="font-size:.64rem;color:var(--muted);">Jan</span>
+        <span style="font-size:.64rem;color:var(--muted);">Feb</span>
+        <span style="font-size:.64rem;color:var(--muted);">Mar</span>
+        <span style="font-size:.64rem;color:var(--muted);">Apr</span>
+        <span style="font-size:.64rem;color:var(--muted);">May</span>
+        <span style="font-size:.64rem;color:var(--muted);">Jun</span>
+      </div>
+    </div>
+
+    <!-- GOALS -->
+    <div class="panel">
+      <div class="panel-header"><h3>Monthly Goals</h3></div>
+      <div class="prog-item">
+        <div class="prog-label"><span>Meals Target</span><span>2,400 / 3,000</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:80%;"></div></div>
+      </div>
+      <div class="prog-item">
+        <div class="prog-label"><span>Claims Goal</span><span>142 / 200</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:71%;background:#66bb6a;"></div></div>
+      </div>
+      <div class="prog-item">
+        <div class="prog-label"><span>Pickups Target</span><span>38 / 50</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:76%;background:#a5d6a7;"></div></div>
+      </div>
+      <div class="prog-item">
+        <div class="prog-label"><span>Volunteer Hours</span><span>210 / 300 hrs</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:70%;background:#c8e6c9;"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row-3">
+    <!-- BADGES -->
+    <div class="panel">
+      <div class="panel-header"><h3>Achievements 🏅</h3></div>
+      <div class="badges-grid">
+        <div class="badge-card"><div class="bc-icon">🥇</div><div class="bc-name">Top NGO</div><div class="bc-desc">Highest claims this month</div></div>
+        <div class="badge-card"><div class="bc-icon">🌟</div><div class="bc-name">100 Claims</div><div class="bc-desc">Reached 100 food claims</div></div>
+        <div class="badge-card"><div class="bc-icon">🚀</div><div class="bc-name">Fast Responder</div><div class="bc-desc">Claimed within 1 hour</div></div>
+        <div class="badge-card locked"><div class="bc-icon">🔒</div><div class="bc-name">500 Meals</div><div class="bc-desc">Serve 500 meals in a month</div></div>
+      </div>
+    </div>
+
+    <!-- MILESTONES -->
+    <div class="panel">
+      <div class="panel-header"><h3>Milestones</h3></div>
+      <div class="milestone-item"><div class="mi-icon">🍱</div><div class="mi-info"><h4>First Food Claim</h4><p>Claimed your first donation</p></div><span class="mi-check">✅</span></div>
+      <div class="milestone-item"><div class="mi-icon">🚚</div><div class="mi-info"><h4>10 Pickups Done</h4><p>Completed 10 pickups</p></div><span class="mi-check">✅</span></div>
+      <div class="milestone-item"><div class="mi-icon">👥</div><div class="mi-info"><h4>5 Volunteers Added</h4><p>Team of 5 volunteers</p></div><span class="mi-check">✅</span></div>
+      <div class="milestone-item"><div class="mi-icon">🍽️</div><div class="mi-info"><h4>1,000 Meals Served</h4><p>Crossed 1000 meals mark</p></div><span class="mi-check">✅</span></div>
+      <div class="milestone-item"><div class="mi-icon">🔒</div><div class="mi-info"><h4>5,000 Meals Served</h4><p>Reach 5000 total meals</p></div><span class="mi-check" style="opacity:.3;">⬜</span></div>
+    </div>
+
+    <!-- QUICK STATS -->
+    <div class="panel">
+      <div class="panel-header"><h3>Quick Stats</h3></div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="background:var(--green-pale);border-radius:10px;padding:14px;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:.82rem;color:var(--muted);">Claim Success Rate</span>
+          <span style="font-size:1.1rem;font-weight:700;color:var(--green);">98%</span>
+        </div>
+        <div style="background:#e3f2fd;border-radius:10px;padding:14px;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:.82rem;color:var(--muted);">Pickup Success Rate</span>
+          <span style="font-size:1.1rem;font-weight:700;color:#1565c0;">94%</span>
+        </div>
+        <div style="background:#fff3e0;border-radius:10px;padding:14px;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:.82rem;color:var(--muted);">Avg Response Time</span>
+          <span style="font-size:1.1rem;font-weight:700;color:#e65100;">1.2 hrs</span>
+        </div>
+        <div style="background:#f3e5f5;border-radius:10px;padding:14px;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:.82rem;color:var(--muted);">Active Since</span>
+          <span style="font-size:1.1rem;font-weight:700;color:#6a1b9a;">Jan 2026</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  // Simple bar chart
+  const vals = [180,240,300,280,420,480];
+  const max  = Math.max(...vals);
+  document.getElementById('barChart').innerHTML = vals.map((v,i) => `
+    <div class="bc">
+      <div class="bv">${v}</div>
+      <div class="bb" style="height:${Math.round((v/max)*100)}px;background:${i===vals.length-1?'#43a047':'#a5d6a7'};"></div>
+    </div>`).join('');
+</script>
+</body>
+</html>

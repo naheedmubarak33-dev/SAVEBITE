@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NGO Panel - Save Bite</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+ 
+  :root {
+    --green: #2e7d32;
+    --green-light: #43a047;
+    --green-pale: #e8f5e9;
+    --green-accent: #66bb6a;
+    --white: #ffffff;
+    --gray: #f4f6f4;
+    --text: #1b2e1c;
+    --text-muted: #6b7c6b;
+    --sidebar-width: 240px;
+    --shadow: 0 2px 12px rgba(46,125,50,0.10);
+  }
+ 
+  body { font-family: 'Poppins', sans-serif; background: var(--gray); color: var(--text); min-height: 100vh; display: flex; }
+ 
+  /* SIDEBAR */
+  .sidebar {
+    width: var(--sidebar-width);
+    background: linear-gradient(180deg, #1b5e20 0%, #2e7d32 100%);
+    min-height: 100vh;
+    position: fixed; left: 0; top: 0;
+    display: flex; flex-direction: column;
+    z-index: 100;
+  }
+  .sidebar-logo {
+    padding: 26px 22px 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+  }
+  .logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .logo-icon { width: 36px; height: 36px; background: white; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .logo-row h2 { color: white; font-size: 1.15rem; font-weight: 700; }
+  .logo-row h2 span { color: var(--green-accent); }
+  .ngo-badge {
+    background: rgba(102,187,106,0.2);
+    border: 1px solid rgba(102,187,106,0.35);
+    border-radius: 8px; padding: 8px 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .ngo-ava {
+    width: 34px; height: 34px; border-radius: 8px;
+    background: var(--green-accent);
+    font-size: 1rem; display: flex; align-items: center; justify-content: center;
+  }
+  .ngo-badge-info .n-name { color: white; font-size: 0.82rem; font-weight: 600; }
+  .ngo-badge-info .n-type { color: rgba(255,255,255,0.55); font-size: 0.68rem; }
+ 
+  .sidebar-nav { padding: 16px 0; flex: 1; }
+  .nav-label { color: rgba(255,255,255,0.4); font-size: 0.67rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 8px 22px 4px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 11px;
+    padding: 11px 22px; color: rgba(255,255,255,0.78);
+    cursor: pointer; transition: all 0.2s; font-size: 0.88rem;
+    border-left: 3px solid transparent; text-decoration: none;
+  }
+  .nav-item:hover, .nav-item.active {
+    background: rgba(255,255,255,0.11); color: white;
+    border-left-color: var(--green-accent);
+  }
+  .nav-item .icon { font-size: 1rem; width: 20px; text-align: center; }
+ 
+  .sidebar-bottom { padding: 14px 22px; border-top: 1px solid rgba(255,255,255,0.12); }
+  .logout-row { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 8px 0; }
+  .logout-row span { color: rgba(255,255,255,0.6); font-size: 0.82rem; transition: color 0.2s; }
+  .logout-row:hover span { color: #ff6b6b; }
+ 
+  /* MAIN */
+  .main { margin-left: var(--sidebar-width); flex: 1; padding: 28px 30px; }
+ 
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .topbar h1 { font-size: 1.4rem; font-weight: 700; }
+  .topbar p { color: var(--text-muted); font-size: 0.82rem; margin-top: 2px; }
+  .topbar-right { display: flex; gap: 10px; align-items: center; }
+ 
+  .btn-primary {
+    background: var(--green); color: white;
+    border: none; border-radius: 10px;
+    padding: 9px 18px; font-family: 'Poppins', sans-serif;
+    font-size: 0.82rem; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; gap: 7px;
+    transition: background 0.2s;
+  }
+  .btn-primary:hover { background: var(--green-light); }
+  .btn-outline {
+    background: white; color: var(--green);
+    border: 1.5px solid #c8e6c9; border-radius: 10px;
+    padding: 8px 16px; font-family: 'Poppins', sans-serif;
+    font-size: 0.82rem; font-weight: 600; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-outline:hover { background: var(--green-pale); }
+ 
+  /* STATS */
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 16px; margin-bottom: 22px;
+  }
+  .stat-card {
+    background: white; border-radius: 14px; padding: 18px 18px 14px;
+    box-shadow: var(--shadow); border: 1px solid #eaf3ea;
+    transition: transform 0.2s;
+  }
+  .stat-card:hover { transform: translateY(-2px); }
+  .stat-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+  .stat-icon {
+    width: 42px; height: 42px; border-radius: 10px;
+    background: var(--green-pale);
+    display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+  }
+  .stat-icon.yellow { background: #fff8e1; }
+  .stat-icon.blue { background: #e3f2fd; }
+  .stat-icon.red { background: #fce4ec; }
+  .stat-card h3 { font-size: 1.5rem; font-weight: 700; }
+  .stat-card p { font-size: 0.76rem; color: var(--text-muted); margin-top: 1px; }
+ 
+  /* CONTENT LAYOUT */
+  .row-2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px; margin-bottom: 18px; }
+  .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+ 
+  .panel {
+    background: white; border-radius: 14px; padding: 20px;
+    box-shadow: var(--shadow); border: 1px solid #eaf3ea;
+  }
+  .panel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .panel-header h3 { font-size: 0.95rem; font-weight: 600; }
+  .panel-header a { font-size: 0.76rem; color: var(--green-light); text-decoration: none; font-weight: 500; }
+ 
+  /* AVAILABLE FOOD CARDS */
+  .food-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .food-card {
+    background: var(--green-pale); border-radius: 12px; padding: 14px;
+    border: 1.5px solid #c8e6c9; transition: all 0.2s; cursor: pointer;
+  }
+  .food-card:hover { border-color: var(--green-accent); background: #d4edda; }
+  .food-card .fc-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+  .fc-emoji { font-size: 1.5rem; }
+  .tag {
+    display: inline-block; padding: 3px 9px; border-radius: 20px;
+    font-size: 0.68rem; font-weight: 600;
+  }
+  .tag.available { background: #e8f5e9; color: #2e7d32; }
+  .tag.urgent { background: #fce4ec; color: #c62828; }
+  .tag.claimed { background: #e3f2fd; color: #1565c0; }
+  .tag.pending { background: #fff8e1; color: #f57f17; }
+ 
+  .food-card .fc-name { font-size: 0.85rem; font-weight: 600; margin-bottom: 3px; }
+  .food-card .fc-meta { font-size: 0.72rem; color: var(--text-muted); }
+  .food-card .fc-qty { font-size: 0.78rem; font-weight: 600; color: var(--green); margin-top: 6px; }
+ 
+  .claim-btn {
+    width: 100%; margin-top: 10px; background: var(--green); color: white;
+    border: none; border-radius: 8px; padding: 6px 0;
+    font-family: 'Poppins', sans-serif; font-size: 0.76rem; font-weight: 600;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .claim-btn:hover { background: var(--green-light); }
+ 
+  /* REQUESTS TABLE */
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; padding: 7px 9px; text-align: left; border-bottom: 1.5px solid #eaf3ea; }
+  .data-table td { padding: 10px 9px; font-size: 0.8rem; border-bottom: 1px solid #f2f7f2; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: #f8fdf8; }
+ 
+  /* VOLUNTEER LIST */
+  .volunteer-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 9px 0; border-bottom: 1px solid #f2f7f2;
+  }
+  .volunteer-item:last-child { border-bottom: none; }
+  .v-ava {
+    width: 34px; height: 34px; border-radius: 50%;
+    font-size: 0.75rem; font-weight: 700; color: white;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .v-info { flex: 1; }
+  .v-info .v-name { font-size: 0.83rem; font-weight: 600; }
+  .v-info .v-role { font-size: 0.7rem; color: var(--text-muted); }
+  .v-status { font-size: 0.72rem; font-weight: 600; }
+  .v-status.online { color: var(--green); }
+  .v-status.offline { color: #bdbdbd; }
+ 
+  /* IMPACT MINI */
+  .impact-row { display: flex; gap: 10px; margin-top: 4px; }
+  .impact-mini {
+    flex: 1; background: var(--green-pale); border-radius: 10px; padding: 12px;
+    text-align: center;
+  }
+  .impact-mini h4 { font-size: 1.2rem; font-weight: 700; color: var(--green); }
+  .impact-mini p { font-size: 0.68rem; color: var(--text-muted); margin-top: 2px; }
+ 
+  /* NOTICE */
+  .notice {
+    background: linear-gradient(135deg, #1b5e20, #2e7d32);
+    border-radius: 12px; padding: 16px 18px; color: white;
+    display: flex; align-items: center; gap: 14px; margin-bottom: 18px;
+  }
+  .notice .n-icon { font-size: 1.5rem; }
+  .notice .n-text h4 { font-size: 0.9rem; font-weight: 600; }
+  .notice .n-text p { font-size: 0.75rem; opacity: 0.8; margin-top: 2px; }
+  .notice .n-btn { margin-left: auto; background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-family: 'Poppins', sans-serif; font-size: 0.76rem; font-weight: 600; }
+ 
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-thumb { background: #c8e6c9; border-radius: 10px; }
+</style>
+</head>
+<body>
+ 
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-row">
+      <div class="logo-icon">🍱</div>
+      <h2>Save <span>Bite</span></h2>
+    </div>
+    <div class="ngo-badge">
+      <div class="ngo-ava">🏥</div>
+      <div class="ngo-badge-info">
+        <div class="n-name">Edhi Foundation</div>
+        <div class="n-type">NGO Account</div>
+      </div>
+    </div>
+  </div>
+ 
+  <nav class="sidebar-nav">
+    <div class="nav-label">Menu</div>
+    <a class="nav-item active" href="Admin-panel.html">
+      <span class="icon">📊</span> Dashboard
+    </a>
+    <a class="nav-item" href="Admin-donation.html">
+      <span class="icon">🍽️</span> Browse Food
+    </a>
+    <a class="nav-item" href="Admin-request.html">
+      <span class="icon">📋</span> My Requests
+    </a>
+    <a class="nav-item" href="Admin-pickup.html">
+      <span class="icon">🚚</span> Pickups
+    </a>
+    <div class="nav-label" style="margin-top:10px;">Account</div>
+    <a class="nav-item" href="Admin-ngo.html">
+      <span class="icon">🏢</span> NGO Profile
+    </a>
+    <a class="nav-item" href="Admin-user.html">
+      <span class="icon">👥</span> Volunteers
+    </a>
+    <a class="nav-item" href="admin-report.html">
+      <span class="icon">📈</span> My Impact
+    </a>
+    <a class="nav-item" href="admin-setting.html">
+      <span class="icon">⚙️</span> Settings
+    </a>
+  </nav>
+ 
+  <div class="sidebar-bottom">
+    <div class="logout-row">
+      <span>⏻</span>
+      <span>Logout</span>
+    </div>
+  </div>
+</aside>
+ 
+<!-- MAIN -->
+<main class="main">
+ 
+  <div class="topbar">
+    <div>
+      <h1>NGO Dashboard</h1>
+      <p>Manage food requests and track your impact.</p>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-outline">📋 My Requests</button>
+      <button class="btn-primary">🍽️ Browse Food</button>
+    </div>
+  </div>
+ 
+  <!-- NOTICE -->
+  <div class="notice">
+    <span class="n-icon">🔔</span>
+    <div class="n-text">
+      <h4>2 Food Donations Available Near You</h4>
+      <p>New food listings added today in Karachi — claim before they expire!</p>
+    </div>
+    <button class="n-btn">View Now</button>
+  </div>
+ 
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon">🍱</div>
+      </div>
+      <h3>142</h3>
+      <p>Total Claims Made</p>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon yellow">⏳</div>
+      </div>
+      <h3>5</h3>
+      <p>Pending Pickups</p>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon">👥</div>
+      </div>
+      <h3>18</h3>
+      <p>Active Volunteers</p>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon blue">🍽️</div>
+      </div>
+      <h3>2,400</h3>
+      <p>Meals Distributed</p>
+    </div>
+  </div>
+ 
+  <!-- AVAILABLE FOOD + REQUESTS -->
+  <div class="row-2">
+ 
+    <!-- AVAILABLE FOOD -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3>Available Food Near You</h3>
+        <a href="#">View All</a>
+      </div>
+      <div class="food-grid">
+ 
+        <div class="food-card">
+          <div class="fc-top">
+            <span class="fc-emoji">🍛</span>
+            <span class="tag urgent">Expires Soon</span>
+          </div>
+          <div class="fc-name">Biryani</div>
+          <div class="fc-meta">📍 Gulshan, Karachi</div>
+          <div class="fc-qty">50 plates available</div>
+          <button class="claim-btn">Claim Now</button>
+        </div>
+ 
+        <div class="food-card">
+          <div class="fc-top">
+            <span class="fc-emoji">🍞</span>
+            <span class="tag available">Available</span>
+          </div>
+          <div class="fc-name">Bread & Buns</div>
+          <div class="fc-meta">📍 DHA, Karachi</div>
+          <div class="fc-qty">30 pcs available</div>
+          <button class="claim-btn">Claim Now</button>
+        </div>
+ 
+        <div class="food-card">
+          <div class="fc-top">
+            <span class="fc-emoji">🥘</span>
+            <span class="tag available">Available</span>
+          </div>
+          <div class="fc-name">Dal Chawal</div>
+          <div class="fc-meta">📍 North Nazimabad</div>
+          <div class="fc-qty">25 packs</div>
+          <button class="claim-btn">Claim Now</button>
+        </div>
+ 
+        <div class="food-card">
+          <div class="fc-top">
+            <span class="fc-emoji">🧆</span>
+            <span class="tag urgent">Expires Soon</span>
+          </div>
+          <div class="fc-name">Fried Items</div>
+          <div class="fc-meta">📍 Saddar, Karachi</div>
+          <div class="fc-qty">80 pcs</div>
+          <button class="claim-btn">Claim Now</button>
+        </div>
+ 
+      </div>
+    </div>
+ 
+    <!-- MY REQUESTS -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3>My Recent Requests</h3>
+        <a href="#">See All</a>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Food</th>
+            <th>Qty</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>🍛 Biryani</td>
+            <td>50</td>
+            <td><span class="tag available">Approved</span></td>
+          </tr>
+          <tr>
+            <td>🍞 Bread</td>
+            <td>30</td>
+            <td><span class="tag claimed">Picked Up</span></td>
+          </tr>
+          <tr>
+            <td>🥘 Dal Chawal</td>
+            <td>20</td>
+            <td><span class="tag pending">Pending</span></td>
+          </tr>
+          <tr>
+            <td>🍰 Cake</td>
+            <td>8</td>
+            <td><span class="tag claimed">Picked Up</span></td>
+          </tr>
+          <tr>
+            <td>🧆 Samosa</td>
+            <td>100</td>
+            <td><span class="tag available">Approved</span></td>
+          </tr>
+        </tbody>
+      </table>
+ 
+      <div class="impact-row" style="margin-top:16px;">
+        <div class="impact-mini">
+          <h4>142</h4>
+          <p>Total Claims</p>
+        </div>
+        <div class="impact-mini">
+          <h4>2.4k</h4>
+          <p>Meals Given</p>
+        </div>
+        <div class="impact-mini">
+          <h4>98%</h4>
+          <p>Success Rate</p>
+        </div>
+      </div>
+    </div>
+ 
+  </div>
+ 
+  <!-- VOLUNTEERS + PICKUPS -->
+  <div class="row-3">
+ 
+    <!-- VOLUNTEERS -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3>Volunteers</h3>
+        <a href="#">Manage</a>
+      </div>
+ 
+      <div class="volunteer-item">
+        <div class="v-ava" style="background:#43a047;">AK</div>
+        <div class="v-info">
+          <div class="v-name">Ali Khan</div>
+          <div class="v-role">Pickup Driver</div>
+        </div>
+        <span class="v-status online">● Online</span>
+      </div>
+      <div class="volunteer-item">
+        <div class="v-ava" style="background:#1976d2;">SR</div>
+        <div class="v-info">
+          <div class="v-name">Sara Raza</div>
+          <div class="v-role">Coordinator</div>
+        </div>
+        <span class="v-status online">● Online</span>
+      </div>
+      <div class="volunteer-item">
+        <div class="v-ava" style="background:#8e24aa;">MN</div>
+        <div class="v-info">
+          <div class="v-name">M. Naveed</div>
+          <div class="v-role">Driver</div>
+        </div>
+        <span class="v-status offline">● Offline</span>
+      </div>
+      <div class="volunteer-item">
+        <div class="v-ava" style="background:#f57c00;">ZA</div>
+        <div class="v-info">
+          <div class="v-name">Zara Aslam</div>
+          <div class="v-role">Distributor</div>
+        </div>
+        <span class="v-status online">● Online</span>
+      </div>
+    </div>
+ 
+    <!-- PICKUP SCHEDULE -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3>Upcoming Pickups</h3>
+        <a href="#">View All</a>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Food</th><th>Time</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>🍛 Biryani</td>
+            <td>Today 3PM</td>
+            <td><span class="tag available">Confirmed</span></td>
+          </tr>
+          <tr>
+            <td>🧆 Samosa</td>
+            <td>Today 5PM</td>
+            <td><span class="tag pending">Pending</span></td>
+          </tr>
+          <tr>
+            <td>🥘 Dal</td>
+            <td>Tomorrow</td>
+            <td><span class="tag available">Confirmed</span></td>
+          </tr>
+          <tr>
+            <td>🍞 Bread</td>
+            <td>Jun 10</td>
+            <td><span class="tag pending">Pending</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+ 
+    <!-- MONTHLY IMPACT -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3>Monthly Impact</h3>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:0.78rem; margin-bottom:5px;">
+            <span>Meals Distributed</span><span style="font-weight:600; color:var(--green);">2,400 / 3,000</span>
+          </div>
+          <div style="background:#eaf3ea; border-radius:20px; height:8px;">
+            <div style="background:var(--green-light); width:80%; height:100%; border-radius:20px;"></div>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:0.78rem; margin-bottom:5px;">
+            <span>Claims Made</span><span style="font-weight:600; color:var(--green);">142 / 200</span>
+          </div>
+          <div style="background:#eaf3ea; border-radius:20px; height:8px;">
+            <div style="background:#43a047; width:71%; height:100%; border-radius:20px;"></div>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:0.78rem; margin-bottom:5px;">
+            <span>Pickups Completed</span><span style="font-weight:600; color:var(--green);">38 / 50</span>
+          </div>
+          <div style="background:#eaf3ea; border-radius:20px; height:8px;">
+            <div style="background:#66bb6a; width:76%; height:100%; border-radius:20px;"></div>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:0.78rem; margin-bottom:5px;">
+            <span>Volunteer Hours</span><span style="font-weight:600; color:var(--green);">210 hrs</span>
+          </div>
+          <div style="background:#eaf3ea; border-radius:20px; height:8px;">
+            <div style="background:#a5d6a7; width:60%; height:100%; border-radius:20px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+  </div>
+ 
+</main>
+</body>
+</html>

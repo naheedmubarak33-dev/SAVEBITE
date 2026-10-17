@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Impact - Save Bite Donor</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{--green:#2e7d32;--green-light:#43a047;--green-pale:#e8f5e9;--green-accent:#66bb6a;--gray:#f4f6f4;--text:#1b2e1c;--muted:#6b7c6b;--sw:240px;--shadow:0 2px 12px rgba(46,125,50,.10);}
+  body{font-family:'Poppins',sans-serif;background:var(--gray);color:var(--text);display:flex;}
+  .sidebar{width:var(--sw);background:linear-gradient(180deg,#1b5e20,#2e7d32);min-height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;z-index:100;}
+  .sb-logo{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.12);}
+  .logo-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .logo-row .li{width:34px;height:34px;background:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+  .logo-row h2{color:#fff;font-size:1.1rem;font-weight:700;}.logo-row h2 span{color:#66bb6a;}
+  .donor-badge{background:rgba(102,187,106,.2);border:1px solid rgba(102,187,106,.35);border-radius:8px;padding:8px 11px;display:flex;align-items:center;gap:9px;}
+  .d-ava{width:32px;height:32px;border-radius:50%;background:var(--green-accent);font-weight:700;color:#fff;font-size:.8rem;display:flex;align-items:center;justify-content:center;}
+  .donor-badge-info .db-name{color:#fff;font-size:.8rem;font-weight:600;}.donor-badge-info .db-type{color:rgba(255,255,255,.5);font-size:.67rem;}
+  .sb-nav{padding:14px 0;flex:1;}
+  .nl{color:rgba(255,255,255,.4);font-size:.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:8px 20px 3px;}
+  .ni{display:flex;align-items:center;gap:10px;padding:10px 20px;color:rgba(255,255,255,.78);cursor:pointer;transition:all .2s;font-size:.86rem;border-left:3px solid transparent;text-decoration:none;}
+  .ni:hover,.ni.active{background:rgba(255,255,255,.11);color:#fff;border-left-color:#66bb6a;}
+  .ni .ic{font-size:.95rem;width:18px;text-align:center;}
+  .sb-bot{padding:12px 20px;border-top:1px solid rgba(255,255,255,.12);}
+  .lo{display:flex;align-items:center;gap:9px;cursor:pointer;}.lo span{color:rgba(255,255,255,.6);font-size:.82rem;transition:color .2s;}.lo:hover span{color:#ff6b6b;}
+  .main{margin-left:var(--sw);flex:1;padding:26px 28px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+  .topbar h1{font-size:1.35rem;font-weight:700;}.topbar p{color:var(--muted);font-size:.8rem;margin-top:1px;}
+
+  .impact-hero{background:linear-gradient(135deg,#1b5e20,#43a047);border-radius:16px;padding:28px;margin-bottom:22px;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+  .ih{text-align:center;}
+  .ih h2{color:#fff;font-size:2rem;font-weight:800;}
+  .ih p{color:rgba(255,255,255,.75);font-size:.78rem;margin-top:4px;}
+
+  .row-2{display:grid;grid-template-columns:1.3fr 1fr;gap:18px;margin-bottom:18px;}
+  .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;}
+  .panel{background:#fff;border-radius:14px;padding:22px;box-shadow:var(--shadow);border:1px solid #eaf3ea;}
+  .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .panel-header h3{font-size:.95rem;font-weight:600;}
+
+  .bar-wrap{display:flex;align-items:flex-end;gap:9px;height:120px;}
+  .bc{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
+  .bv{font-size:.65rem;font-weight:700;color:var(--green);}
+  .bb{width:100%;border-radius:6px 6px 0 0;}
+  .bl{font-size:.63rem;color:var(--muted);}
+
+  .prog-item{margin-bottom:13px;}
+  .prog-item:last-child{margin-bottom:0;}
+  .prog-label{display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:5px;}
+  .prog-label span:last-child{font-weight:700;color:var(--green);}
+  .prog-track{background:#eaf3ea;border-radius:20px;height:8px;}
+  .prog-fill{height:100%;border-radius:20px;background:var(--green-light);}
+
+  .badges-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+  .badge-card{background:var(--green-pale);border-radius:11px;padding:14px;text-align:center;border:1.5px solid #c8e6c9;}
+  .badge-card .bi{font-size:1.8rem;margin-bottom:5px;}
+  .badge-card .bn{font-size:.8rem;font-weight:700;color:var(--green);}
+  .badge-card .bd{font-size:.68rem;color:var(--muted);margin-top:2px;}
+  .badge-card.locked{background:#f4f6f4;border-color:#e0e0e0;opacity:.55;}
+  .badge-card.locked .bn{color:var(--muted);}
+
+  .ms-item{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid #f2f7f2;}
+  .ms-item:last-child{border-bottom:none;}
+  .ms-icon{width:34px;height:34px;border-radius:50%;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;}
+  .ms-info{flex:1;}
+  .ms-info h4{font-size:.82rem;font-weight:600;}
+  .ms-info p{font-size:.71rem;color:var(--muted);margin-top:1px;}
+
+  ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:#c8e6c9;border-radius:10px;}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="logo-row"><div class="li">🍱</div><h2>Save <span>Bite</span></h2></div>
+    <div class="donor-badge"><div class="d-ava">AK</div><div class="donor-badge-info"><div class="db-name">Ahmed Khan</div><div class="db-type">Donor Account</div></div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nl">Menu</div>
+    <a class="nav-item" href="donor/dashboard.php"></a><span class="ic">📊</span> Dashboard</a>
+    <a class="ni" href="donor-donate.html"><span class="ic">🍽️</span> Donate Food</a>
+    <a class="ni" href="donor/my_donations.php"><span class="ic">📋</span> My Donations</a>
+    <a class="ni" href="donor/pickups.php"><span class="ic">🚚</span> Pickup Status</a>
+    <div class="nl" style="margin-top:10px;">Account</div>
+    <a class="ni" href="donor/profile.php"><span class="ic">👤</span> Profile</a>
+    <a class="ni active" href="donor/impact.php"><span class="ic">📈</span> My Impact</a>
+    <a class="ni" href="donor/notifications.php"><span class="ic">🔔</span> Notifications</a>
+  </nav>
+  <div class="sb-bot">
+    <a href="auth/logout.php" style="text-decoration:none;">
+    <div class="lo">
+      <span>⏻</span>
+      <span>Logout</span>
+    </div>
+</a>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar"><div><h1>My Impact 📈</h1><p>See the difference your donations are making.</p></div></div>
+
+  <div class="impact-hero">
+    <div class="ih"><h2>28</h2><p>🍱 Donations</p></div>
+    <div class="ih"><h2>480</h2><p>🍽️ Meals Given</p></div>
+    <div class="ih"><h2>62 kg</h2><p>♻️ Food Saved</p></div>
+    <div class="ih"><h2>3 mo</h2><p>📅 Active Months</p></div>
+  </div>
+
+  <div class="row-2">
+    <div class="panel">
+      <div class="panel-header"><h3>Monthly Donations</h3></div>
+      <div class="bar-wrap" id="barChart"></div>
+      <div style="display:flex;justify-content:space-between;margin-top:8px;">
+        <span style="font-size:.63rem;color:var(--muted);">Jan</span>
+        <span style="font-size:.63rem;color:var(--muted);">Feb</span>
+        <span style="font-size:.63rem;color:var(--muted);">Mar</span>
+        <span style="font-size:.63rem;color:var(--muted);">Apr</span>
+        <span style="font-size:.63rem;color:var(--muted);">May</span>
+        <span style="font-size:.63rem;color:var(--muted);">Jun</span>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header"><h3>Monthly Goals</h3></div>
+      <div class="prog-item">
+        <div class="prog-label"><span>Donations Goal</span><span>28 / 40</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:70%;"></div></div>
+      </div>
+      <div class="prog-item">
+        <div class="prog-label"><span>Meals Target</span><span>480 / 600</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:80%;background:#66bb6a;"></div></div>
+      </div>
+      <div class="prog-item">
+        <div class="prog-label"><span>Claim Rate</span><span>86%</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:86%;background:#a5d6a7;"></div></div>
+      </div>
+      <div class="prog-item">
+        <div class="prog-label"><span>Food Saved</span><span>62 / 100 kg</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:62%;background:#c8e6c9;"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row-3">
+    <div class="panel">
+      <div class="panel-header"><h3>Badges 🏅</h3></div>
+      <div class="badges-grid">
+        <div class="badge-card"><div class="bi">🥇</div><div class="bn">Top Donor</div><div class="bd">Most donations in June</div></div>
+        <div class="badge-card"><div class="bi">🌟</div><div class="bn">25 Donations</div><div class="bd">Reached 25 donations</div></div>
+        <div class="badge-card"><div class="bi">🚀</div><div class="bd">Quick Lister</div><div class="bn">Fast poster</div></div>
+        <div class="badge-card locked"><div class="bi">🔒</div><div class="bn">50 Donations</div><div class="bd">Post 50 donations</div></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><h3>Milestones</h3></div>
+      <div class="ms-item"><div class="ms-icon">🍱</div><div class="ms-info"><h4>First Donation</h4><p>Posted your first food donation</p></div><span>✅</span></div>
+      <div class="ms-item"><div class="ms-icon">🍽️</div><div class="ms-info"><h4>100 Meals Served</h4><p>Contributed to 100 meals</p></div><span>✅</span></div>
+      <div class="ms-item"><div class="ms-icon">📦</div><div class="ms-info"><h4>10 Donations</h4><p>Posted 10 donations</p></div><span>✅</span></div>
+      <div class="ms-item"><div class="ms-icon">🏆</div><div class="ms-info"><h4>Top Donor Badge</h4><p>Earned top donor status</p></div><span>✅</span></div>
+      <div class="ms-item"><div class="ms-icon">🔒</div><div class="ms-info"><h4>50 Donations</h4><p>Post 50 total donations</p></div><span style="opacity:.3;">⬜</span></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><h3>Quick Stats</h3></div>
+      <div style="display:flex;flex-direction:column;gap:11px;">
+        <div style="background:var(--green-pale);border-radius:10px;padding:13px;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:.81rem;color:var(--muted);">Avg per Month</span>
+          <span style="font-size:1.1rem;font-weight:700;color:var(--green);">9 donations</span>
+        </div>
+        <div style="background:#e3f2fd;border-radius:10px;padding:13px;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:.81rem;color:var(--muted);">Claim Rate</span>
+          <span style="font-size:1.1rem;font-weight:700;color:#1565c0;">86%</span>
+        </div>
+        <div style="background:#fff3e0;border-radius:10px;padding:13px;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:.81rem;color:var(--muted);">Most Donated</span>
+          <span style="font-size:1.1rem;font-weight:700;color:#e65100;">Cooked Meals</span>
+        </div>
+        <div style="background:#f3e5f5;border-radius:10px;padding:13px;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:.81rem;color:var(--muted);">Rank</span>
+          <span style="font-size:1.1rem;font-weight:700;color:#6a1b9a;">#1 This Month 🥇</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const vals=[2,4,6,5,8,28];
+  const max=Math.max(...vals);
+  document.getElementById('barChart').innerHTML=vals.map((v,i)=>`
+    <div class="bc">
+      <div class="bv">${v}</div>
+      <div class="bb" style="height:${Math.round((v/max)*100)}px;background:${i===vals.length-1?'#43a047':'#a5d6a7'};"></div>
+    </div>`).join('');
+</script>
+</body>
+</html>

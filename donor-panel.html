@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Donor Panel - Save Bite</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --green: #2e7d32;
+    --green-light: #43a047;
+    --green-pale: #e8f5e9;
+    --green-accent: #66bb6a;
+    --white: #ffffff;
+    --gray: #f4f6f4;
+    --text: #1b2e1c;
+    --text-muted: #6b7c6b;
+    --sidebar-width: 240px;
+    --shadow: 0 2px 12px rgba(46,125,50,0.10);
+  }
+
+  body { font-family: 'Poppins', sans-serif; background: var(--gray); color: var(--text); min-height: 100vh; display: flex; }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-width);
+    background: linear-gradient(180deg, #1b5e20 0%, #2e7d32 100%);
+    min-height: 100vh;
+    position: fixed; left: 0; top: 0;
+    display: flex; flex-direction: column;
+    z-index: 100;
+  }
+
+  .sidebar-logo {
+    padding: 26px 22px 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+  }
+  .logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .logo-icon { width: 36px; height: 36px; background: white; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .logo-row h2 { color: white; font-size: 1.15rem; font-weight: 700; }
+  .logo-row h2 span { color: var(--green-accent); }
+
+  .donor-badge {
+    background: rgba(102,187,106,0.2);
+    border: 1px solid rgba(102,187,106,0.35);
+    border-radius: 8px; padding: 10px 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .donor-ava {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--green-accent);
+    font-weight: 700; color: white; font-size: 0.85rem;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .donor-badge-info .d-name { color: white; font-size: 0.82rem; font-weight: 600; }
+  .donor-badge-info .d-type { color: rgba(255,255,255,0.5); font-size: 0.68rem; }
+
+  .sidebar-nav { padding: 16px 0; flex: 1; }
+  .nav-label { color: rgba(255,255,255,0.4); font-size: 0.67rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 8px 22px 4px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 11px;
+    padding: 11px 22px; color: rgba(255,255,255,0.78);
+    cursor: pointer; transition: all 0.2s; font-size: 0.88rem;
+    border-left: 3px solid transparent; text-decoration: none;
+  }
+  .nav-item:hover, .nav-item.active {
+    background: rgba(255,255,255,0.11); color: white;
+    border-left-color: var(--green-accent);
+  }
+  .nav-item .icon { font-size: 1rem; width: 20px; text-align: center; }
+
+  .sidebar-bottom {
+    padding: 14px 22px;
+    border-top: 1px solid rgba(255,255,255,0.12);
+  }
+  .logout-row { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 8px 0; }
+  .logout-row span { color: rgba(255,255,255,0.6); font-size: 0.82rem; transition: color 0.2s; }
+  .logout-row:hover span { color: #ff6b6b; }
+
+  /* ── MAIN ── */
+  .main { margin-left: var(--sidebar-width); flex: 1; padding: 28px 30px; }
+
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .topbar h1 { font-size: 1.4rem; font-weight: 700; }
+  .topbar p { color: var(--text-muted); font-size: 0.82rem; margin-top: 2px; }
+  .topbar-right { display: flex; gap: 10px; align-items: center; }
+
+  .btn-primary {
+    background: var(--green); color: white;
+    border: none; border-radius: 10px;
+    padding: 9px 18px; font-family: 'Poppins', sans-serif;
+    font-size: 0.82rem; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; gap: 7px;
+    transition: background 0.2s;
+  }
+  .btn-primary:hover { background: var(--green-light); }
+
+  .notif-btn {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: white; border: 1.5px solid #dde8dd;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 1rem; position: relative;
+  }
+  .notif-dot { position: absolute; top: 7px; right: 7px; width: 7px; height: 7px; background: #e53935; border-radius: 50%; }
+
+  /* ── STATS ── */
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 16px; margin-bottom: 22px;
+  }
+  .stat-card {
+    background: white; border-radius: 14px; padding: 20px 18px 16px;
+    box-shadow: var(--shadow); border: 1px solid #eaf3ea;
+    display: flex; align-items: center; gap: 16px;
+    transition: transform 0.2s;
+  }
+  .stat-card:hover { transform: translateY(-3px); }
+  .stat-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; flex-shrink: 0;
+  }
+  .si-green  { background: var(--green-pale); }
+  .si-orange { background: #fff3e0; }
+  .si-blue   { background: #e3f2fd; }
+  .si-purple { background: #f3e5f5; }
+  .stat-info h3 { font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
+  .stat-info p  { font-size: 0.76rem; color: var(--text-muted); margin-top: 2px; }
+
+  /* ── HERO BANNER ── */
+  .hero-banner {
+    background: linear-gradient(135deg, #1b5e20 0%, #388e3c 60%, #43a047 100%);
+    border-radius: 16px; padding: 24px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 22px; overflow: hidden; position: relative;
+  }
+  .hero-banner::before {
+    content: '🍱';
+    position: absolute; right: 120px; top: 50%; transform: translateY(-50%);
+    font-size: 5rem; opacity: 0.12;
+  }
+  .hero-banner .hb-left h2 { color: white; font-size: 1.2rem; font-weight: 700; }
+  .hero-banner .hb-left p  { color: rgba(255,255,255,0.8); font-size: 0.82rem; margin-top: 5px; max-width: 380px; }
+  .btn-white {
+    background: white; color: var(--green);
+    border: none; border-radius: 10px;
+    padding: 10px 20px; font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem; font-weight: 700; cursor: pointer;
+    white-space: nowrap; transition: opacity 0.2s;
+  }
+  .btn-white:hover { opacity: 0.9; }
+
+  /* ── LAYOUTS ── */
+  .row-2   { display: grid; grid-template-columns: 1.5fr 1fr;  gap: 18px; margin-bottom: 18px; }
+  .row-3   { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+
+  .panel {
+    background: white; border-radius: 14px; padding: 20px;
+    box-shadow: var(--shadow); border: 1px solid #eaf3ea;
+  }
+  .panel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .panel-header h3 { font-size: 0.95rem; font-weight: 600; }
+  .panel-header a  { font-size: 0.76rem; color: var(--green-light); text-decoration: none; font-weight: 500; }
+  .panel-header a:hover { text-decoration: underline; }
+
+  /* ── DONATE FORM ── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-group label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    border: 1.5px solid #dde8dd; border-radius: 9px;
+    padding: 9px 12px; font-family: 'Poppins', sans-serif;
+    font-size: 0.82rem; color: var(--text); outline: none;
+    transition: border-color 0.2s; background: white;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus { border-color: var(--green-accent); }
+  .form-group textarea { resize: vertical; min-height: 70px; }
+
+  .submit-btn {
+    width: 100%; margin-top: 14px;
+    background: var(--green); color: white;
+    border: none; border-radius: 10px;
+    padding: 11px 0; font-family: 'Poppins', sans-serif;
+    font-size: 0.88rem; font-weight: 600; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .submit-btn:hover { background: var(--green-light); }
+
+  /* ── TAGS ── */
+  .tag {
+    display: inline-block; padding: 3px 10px; border-radius: 20px;
+    font-size: 0.68rem; font-weight: 600;
+  }
+  .tag.available  { background: #e8f5e9; color: #2e7d32; }
+  .tag.pending    { background: #fff8e1; color: #f57f17; }
+  .tag.claimed    { background: #e3f2fd; color: #1565c0; }
+  .tag.expired    { background: #fce4ec; color: #c62828; }
+  .tag.completed  { background: #e8f5e9; color: #2e7d32; }
+
+  /* ── DONATION TABLE ── */
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th {
+    font-size: 0.7rem; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.8px;
+    padding: 7px 10px; text-align: left;
+    border-bottom: 1.5px solid #eaf3ea;
+  }
+  .data-table td { padding: 10px 10px; font-size: 0.8rem; border-bottom: 1px solid #f2f7f2; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: #f8fdf8; }
+
+  .del-btn {
+    background: #fce4ec; color: #c62828; border: none;
+    border-radius: 6px; padding: 3px 10px;
+    font-family: 'Poppins', sans-serif; font-size: 0.7rem;
+    font-weight: 600; cursor: pointer; transition: opacity 0.2s;
+  }
+  .del-btn:hover { opacity: 0.75; }
+  .edit-btn {
+    background: #e3f2fd; color: #1565c0; border: none;
+    border-radius: 6px; padding: 3px 10px;
+    font-family: 'Poppins', sans-serif; font-size: 0.7rem;
+    font-weight: 600; cursor: pointer; transition: opacity 0.2s;
+  }
+  .edit-btn:hover { opacity: 0.75; }
+
+  /* ── PROGRESS BARS ── */
+  .progress-item { margin-bottom: 14px; }
+  .progress-item:last-child { margin-bottom: 0; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 5px; }
+  .progress-label span:last-child { font-weight: 600; color: var(--green); }
+  .progress-track { background: #eaf3ea; border-radius: 20px; height: 8px; }
+  .progress-fill  { height: 100%; border-radius: 20px; background: var(--green-light); }
+
+  /* ── TIMELINE / ACTIVITY ── */
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .tl-item {
+    display: flex; gap: 12px; padding-bottom: 14px;
+    position: relative;
+  }
+  .tl-item:last-child { padding-bottom: 0; }
+  .tl-dot-wrap { display: flex; flex-direction: column; align-items: center; }
+  .tl-dot {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--green-pale);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem; flex-shrink: 0;
+  }
+  .tl-line { flex: 1; width: 2px; background: #eaf3ea; margin: 4px 0; }
+  .tl-item:last-child .tl-line { display: none; }
+  .tl-content { flex: 1; padding-top: 4px; }
+  .tl-content .tl-title { font-size: 0.83rem; font-weight: 600; }
+  .tl-content .tl-meta  { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+
+  /* ── IMPACT CARD ── */
+  .impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .impact-box {
+    background: var(--green-pale); border-radius: 10px;
+    padding: 14px; text-align: center;
+  }
+  .impact-box h4 { font-size: 1.3rem; font-weight: 700; color: var(--green); }
+  .impact-box p  { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; }
+
+  /* ── TIPS CARD ── */
+  .tip-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid #f2f7f2;
+  }
+  .tip-item:last-child { border-bottom: none; }
+  .tip-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--green-pale);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.95rem; flex-shrink: 0;
+  }
+  .tip-text .t-title { font-size: 0.82rem; font-weight: 600; }
+  .tip-text .t-desc  { font-size: 0.72rem; color: var(--text-muted); margin-top: 1px; }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-thumb { background: #c8e6c9; border-radius: 10px; }
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-row">
+      <div class="logo-icon">🍱</div>
+      <h2>Save <span>Bite</span></h2>
+    </div>
+    <div class="donor-badge">
+      <div class="donor-ava">AK</div>
+      <div class="donor-badge-info">
+        <div class="d-name">Ahmed Khan</div>
+        <div class="d-type">Donor Account</div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-label">Menu</div>
+    <a class="nav-item active" href="donor/dashboard.php">
+      <span class="icon">📊</span> Dashboard
+    </a>
+    <a class="nav-item" href="donor_donate.html">
+      <span class="icon">🍽️</span> Donate Food
+    </a>
+    <a class="nav-item" href="donor/my_donations.php">
+      <span class="icon">📋</span> My Donations
+    </a>
+    <a class="nav-item" href="donor/pickups.php">
+      <span class="icon">🚚</span> Pickup Status
+    </a>
+
+    <div class="nav-label" style="margin-top:10px;">Account</div>
+    <a class="nav-item" href="donor/profile.php">
+      <span class="icon">👤</span> Profile
+    </a>
+    <a class="nav-item" href="donor/impact.php">
+      <span class="icon">📈</span> My Impact
+    </a>
+    <a class="nav-item" href="donor/notifications.php">
+      <span class="icon">🔔</span> Notifications
+    </a>
+
+  </nav>
+
+    <div class="sidebar-bottom">
+    <a href="auth/logout.php" style="text-decoration:none;">
+      <div class="logout-row">
+        <span>⏻</span>
+        <span>Logout</span>
+      </div>
+    </a>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<main class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div>
+      <h1>Donor Dashboard</h1>
+      <p>Track your donations and see your impact.</p>
+    </div>
+    <div class="topbar-right">
+      <a href="donor/notifications.php" style="text-decoration:none;">
+      <div class="notif-btn">
+        🔔
+        <span class="notif-dot"></span>
+      </div>
+      </a>
+      <a href="donor-donate.html" class="btn-primary" style="text-decoration:none;">➕ New Donation</a>
+    </div>
+  </div>
+
+  <!-- HERO BANNER -->
+  <div class="hero-banner">
+    <div class="hb-left">
+      <h2>You've helped feed 480 people this month! 🎉</h2>
+      <p>Your food donations are making a real difference. Keep donating surplus food and reducing waste in your community.</p>
+    </div>
+    <a href="donor-donate.html" class="btn-white" style="text-decoration:none;">🍱 Donate Now</a>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon si-green">🍱</div>
+      <div class="stat-info">
+        <h3>28</h3>
+        <p>Total Donations</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon si-orange">⏳</div>
+      <div class="stat-info">
+        <h3>3</h3>
+        <p>Pending Pickup</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon si-blue">✅</div>
+      <div class="stat-info">
+        <h3>24</h3>
+        <p>Successfully Claimed</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon si-purple">🍽️</div>
+      <div class="stat-info">
+        <h3>480</h3>
+        <p>Meals Contributed</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DONATE FORM + MY DONATIONS -->
+  <div class="row-2">
+
+    <!-- NEW DONATION FORM -->
+<form action="donor/add_donation.php" method="POST">
+    <div class="panel">
+    
+      <div class="panel-header">
+        <h3>🍱 Add New Donation</h3>
+      </div>
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label>Food Name</label>
+          <input type="text" name="food_name" placeholder="e.g. Biryani, Bread...">
+        </div>
+
+        <div class="form-group">
+          <label>Quantity</label>
+          <input type="number" name="quantity" placeholder="e.g. 10 plates">
+        </div>
+
+        <div class="form-group">
+          <label>Food Category</label>
+          <select name="category">
+            <option value="">Select Category</option>
+            <option>Cooked Meal</option>
+            <option>Bakery Items</option>
+            <option>Raw Groceries</option>
+            <option>Drinks / Beverages</option>
+            <option>Fruits & Vegetables</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Expiry / Pickup Time</label>
+       <input type="datetime-local" name="expiry_time">         
+        </div>
+
+        <div class="form-group full">
+          <label>Pickup Location</label>
+          <input type="text" name="location" placeholder="Full address for pickup">
+        </div>
+
+        <div class="form-group">
+          <label>Contact Number</label>
+          <input type="tel" name="contact_phone" placeholder="+92 300 0000000">
+        </div>
+
+        <div class="form-group">
+          <label>Serves (People)</label>
+          <input type="number" name="serves" placeholder="Approx. people served">
+        </div>
+
+        <div class="form-group full">
+          <label>Additional Notes</label>
+          <textarea name="notes" placeholder="Any special instructions or details..."></textarea>
+        </div>
+
+      </div>
+<button type="submit" class="submit-btn">Submit Donation 🍱</button>
+</div>
+</form>
+    <!-- MY DONATIONS LIST -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3>My Donations</h3>
+        <a href="#">View All</a>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Food</th>
+            <th>Qty</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>🍛 Biryani</td>
+            <td>50</td>
+            <td>Jun 8</td>
+            <td><span class="tag available">Available</span></td>
+            <td><button class="edit-btn">Edit</button></td>
+          </tr>
+          <tr>
+            <td>🍞 Bread</td>
+            <td>30</td>
+            <td>Jun 7</td>
+            <td><span class="tag claimed">Claimed</span></td>
+            <td><button class="del-btn">Delete</button></td>
+          </tr>
+          <tr>
+            <td>🥘 Dal Chawal</td>
+            <td>20</td>
+            <td>Jun 6</td>
+            <td><span class="tag claimed">Claimed</span></td>
+            <td><button class="del-btn">Delete</button></td>
+          </tr>
+          <tr>
+            <td>🧆 Samosa</td>
+            <td>100</td>
+            <td>Jun 5</td>
+            <td><span class="tag pending">Pending</span></td>
+            <td><button class="edit-btn">Edit</button></td>
+          </tr>
+          <tr>
+            <td>🍰 Cake</td>
+            <td>8</td>
+            <td>Jun 4</td>
+            <td><span class="tag claimed">Claimed</span></td>
+            <td><button class="del-btn">Delete</button></td>
+          </tr>
+          <tr>
+            <td>🥗 Salad</td>
+            <td>15</td>
+            <td>Jun 2</td>
+            <td><span class="tag expired">Expired</span></td>
+            <td><button class="del-btn">Delete</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- IMPACT + ACTIVITY + TIPS -->
+  <div class="row-3">
+
+    <!-- MY IMPACT -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3>My Impact</h3>
+      </div>
+      <div class="impact-grid" style="margin-bottom:16px;">
+        <div class="impact-box">
+          <h4>480</h4>
+          <p>People Fed</p>
+        </div>
+        <div class="impact-box">
+          <h4>28</h4>
+          <p>Donations</p>
+        </div>
+        <div class="impact-box">
+          <h4>62 kg</h4>
+          <p>Food Saved</p>
+        </div>
+        <div class="impact-box">
+          <h4>3 mo</h4>
+          <p>Active Since</p>
+        </div>
+      </div>
+
+      <div class="progress-item">
+        <div class="progress-label">
+          <span>Monthly Goal</span>
+          <span>28 / 40</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width:70%;"></div>
+        </div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-label">
+          <span>Meals Target</span>
+          <span>480 / 600</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width:80%;"></div>
+        </div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-label">
+          <span>Claims Rate</span>
+          <span>86%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width:86%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT ACTIVITY -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3>Recent Activity</h3>
+      </div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot-wrap">
+            <div class="tl-dot">🍛</div>
+            <div class="tl-line"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">Biryani — 50 plates donated</div>
+            <div class="tl-meta">Today, 2:00 PM · <span style="color:var(--green);font-weight:600;">Available</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot-wrap">
+            <div class="tl-dot">✅</div>
+            <div class="tl-line"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">Bread claimed by Edhi Foundation</div>
+            <div class="tl-meta">Today, 11:00 AM · Picked up</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot-wrap">
+            <div class="tl-dot">🚚</div>
+            <div class="tl-line"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">Volunteer assigned for Dal pickup</div>
+            <div class="tl-meta">Yesterday, 6:30 PM</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot-wrap">
+            <div class="tl-dot">🏢</div>
+            <div class="tl-line"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">Saylani Welfare claimed Samosa</div>
+            <div class="tl-meta">Jun 6, 3:00 PM</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot-wrap">
+            <div class="tl-dot">⭐</div>
+            <div class="tl-line"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">You earned "Top Donor" badge!</div>
+            <div class="tl-meta">Jun 5 · Achievement unlocked</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIPS -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3>Donation Tips</h3>
+      </div>
+      <div class="tip-item">
+        <div class="tip-icon">⏰</div>
+        <div class="tip-text">
+          <div class="t-title">Post Early</div>
+          <div class="t-desc">List donations at least 2 hours before expiry for better pickup chances.</div>
+        </div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-icon">📍</div>
+        <div class="tip-text">
+          <div class="t-title">Accurate Location</div>
+          <div class="t-desc">Always add a clear and complete pickup address to avoid delays.</div>
+        </div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-icon">📦</div>
+        <div class="tip-text">
+          <div class="t-title">Pack Properly</div>
+          <div class="t-desc">Keep food covered and properly packed before volunteer arrives.</div>
+        </div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-icon">📞</div>
+        <div class="tip-text">
+          <div class="t-title">Stay Reachable</div>
+          <div class="t-desc">Keep your contact number updated so NGOs can reach you quickly.</div>
+        </div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-icon">🔁</div>
+        <div class="tip-text">
+          <div class="t-title">Donate Regularly</div>
+          <div class="t-desc">Regular donors earn badges and help more families every month.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+</body>
+</html>

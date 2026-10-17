@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Users - Save Bite Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --green:#2e7d32;--green-light:#43a047;--green-pale:#e8f5e9;
+    --green-accent:#66bb6a;--white:#fff;--gray:#f4f6f4;
+    --text:#1b2e1c;--muted:#6b7c6b;--sw:240px;
+    --shadow:0 2px 12px rgba(46,125,50,.10);
+  }
+  body{font-family:'Poppins',sans-serif;background:var(--gray);color:var(--text);display:flex;}
+ 
+  /* SIDEBAR */
+  .sidebar{width:var(--sw);background:linear-gradient(180deg,#1b5e20,#2e7d32);min-height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;z-index:100;}
+  .sb-logo{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:10px;}
+  .sb-logo .li{width:34px;height:34px;background:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+  .sb-logo h2{color:#fff;font-size:1.1rem;font-weight:700;}
+  .sb-logo h2 span{color:var(--green-accent);}
+  .sb-nav{padding:14px 0;flex:1;}
+  .nl{color:rgba(255,255,255,.4);font-size:.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:8px 20px 3px;}
+  .ni{display:flex;align-items:center;gap:10px;padding:10px 20px;color:rgba(255,255,255,.78);cursor:pointer;transition:all .2s;font-size:.86rem;border-left:3px solid transparent;text-decoration:none;}
+  .ni:hover,.ni.active{background:rgba(255,255,255,.11);color:#fff;border-left-color:var(--green-accent);}
+  .ni .ic{font-size:.95rem;width:18px;text-align:center;}
+  .sb-bot{padding:12px 20px;border-top:1px solid rgba(255,255,255,.12);}
+  .lo{display:flex;align-items:center;gap:9px;cursor:pointer;}
+  .lo span{color:rgba(255,255,255,.6);font-size:.82rem;transition:color .2s;}
+  .lo:hover span{color:#ff6b6b;}
+ 
+  /* MAIN */
+  .main{margin-left:var(--sw);flex:1;padding:26px 28px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+  .topbar h1{font-size:1.35rem;font-weight:700;}
+  .topbar p{color:var(--muted);font-size:.8rem;margin-top:1px;}
+  .btn-primary{background:var(--green);color:#fff;border:none;border-radius:10px;padding:9px 18px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;transition:background .2s;}
+  .btn-primary:hover{background:var(--green-light);}
+ 
+  /* STATS ROW */
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+  .sc{background:#fff;border-radius:13px;padding:16px 16px 12px;box-shadow:var(--shadow);border:1px solid #eaf3ea;display:flex;align-items:center;gap:13px;}
+  .sc-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+  .ig{background:var(--green-pale)}.io{background:#fff3e0}.ib{background:#e3f2fd}.ir{background:#fce4ec}
+  .sc-info h3{font-size:1.4rem;font-weight:700;line-height:1.1;}
+  .sc-info p{font-size:.74rem;color:var(--muted);margin-top:2px;}
+ 
+  /* TOOLBAR */
+  .toolbar{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
+  .search-box{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #dde8dd;border-radius:10px;padding:8px 14px;flex:1;min-width:200px;}
+  .search-box input{border:none;outline:none;font-family:'Poppins',sans-serif;font-size:.82rem;color:var(--text);background:transparent;width:100%;}
+  .filter-select{background:#fff;border:1.5px solid #dde8dd;border-radius:10px;padding:9px 12px;font-family:'Poppins',sans-serif;font-size:.82rem;color:var(--text);outline:none;cursor:pointer;}
+ 
+  /* TABLE PANEL */
+  .panel{background:#fff;border-radius:14px;padding:20px;box-shadow:var(--shadow);border:1px solid #eaf3ea;}
+  .data-table{width:100%;border-collapse:collapse;}
+  .data-table th{font-size:.7rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;padding:8px 10px;text-align:left;border-bottom:1.5px solid #eaf3ea;}
+  .data-table td{padding:11px 10px;font-size:.8rem;border-bottom:1px solid #f2f7f2;vertical-align:middle;}
+  .data-table tr:last-child td{border-bottom:none;}
+  .data-table tr:hover td{background:#f8fdf8;}
+  .uc{display:flex;align-items:center;gap:9px;}
+  .ua{width:32px;height:32px;border-radius:50%;font-size:.72rem;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:600;}
+  .tag.active{background:#e8f5e9;color:#2e7d32}
+  .tag.pending{background:#fff8e1;color:#f57f17}
+  .tag.blocked{background:#fce4ec;color:#c62828}
+  .tag.donor{background:#e3f2fd;color:#1565c0}
+  .tag.ngo{background:#f3e5f5;color:#6a1b9a}
+  .ab{border:none;border-radius:6px;padding:4px 11px;font-family:'Poppins',sans-serif;font-size:.7rem;font-weight:600;cursor:pointer;transition:opacity .2s;}
+  .ab:hover{opacity:.75;}
+  .ab.edit{background:#e3f2fd;color:#1565c0;}
+  .ab.del{background:#fce4ec;color:#c62828;}
+  .ab.block{background:#fff8e1;color:#f57f17;}
+  .ab.approve{background:#e8f5e9;color:#2e7d32;}
+  .actions{display:flex;gap:5px;flex-wrap:wrap;}
+  .empty-row td{text-align:center;padding:30px;color:var(--muted);font-size:.85rem;}
+ 
+  /* MODAL */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;}
+  .modal-overlay.show{display:flex;}
+  .modal{background:#fff;border-radius:16px;padding:28px;width:100%;max-width:480px;box-shadow:0 8px 40px rgba(0,0,0,.18);}
+  .modal h3{font-size:1.05rem;font-weight:700;margin-bottom:18px;}
+  .fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+  .fg label{font-size:.73rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+  .fg input,.fg select{border:1.5px solid #dde8dd;border-radius:9px;padding:9px 12px;font-family:'Poppins',sans-serif;font-size:.82rem;color:var(--text);outline:none;transition:border-color .2s;}
+  .fg input:focus,.fg select:focus{border-color:var(--green-accent);}
+  .modal-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:6px;}
+  .btn-cancel{background:#f4f6f4;color:var(--text);border:none;border-radius:9px;padding:9px 18px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;}
+  .btn-save{background:var(--green);color:#fff;border:none;border-radius:9px;padding:9px 20px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:background .2s;}
+  .btn-save:hover{background:var(--green-light);}
+ 
+  /* TOAST */
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#fff;padding:12px 20px;border-radius:10px;font-size:.82rem;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;}
+  .toast.show{opacity:1;transform:translateY(0);}
+ 
+  ::-webkit-scrollbar{width:5px;}
+  ::-webkit-scrollbar-thumb{background:#c8e6c9;border-radius:10px;}
+</style>
+</head>
+<body>
+ 
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="li">🍱</div>
+    <h2>Save <span>Bite</span></h2>
+  </div>
+  <nav class="sb-nav">
+    <div class="nl">Main</div>
+    <a class="ni" href="Admin-panel.html"><span class="ic">📊</span> Dashboard</a>
+    <a class="ni active" href="Admin-user.html"><span class="ic">👥</span> Users</a>
+    <a class="ni" href="Admin-ngo.html"><span class="ic">🏢</span> NGOs</a>
+    <a class="ni" href="Admin-donation.html"><span class="ic">🍽️</span> Donations</a>
+    <div class="nl" style="margin-top:10px;">Management</div>
+    <a class="ni" href="Admin-request.html"><span class="ic">📋</span> Requests</a>
+    <a class="ni" href="Admin-pickup.html"><span class="ic">🚚</span> Pickups</a>
+    <a class="ni" href="admin-report.html"><span class="ic">📈</span> Reports</a>
+    <a class="ni" href="admin-setting.html"><span class="ic">⚙️</span> Settings</a>
+  </nav>
+  <div class="sb-bot">
+    <div class="lo"><span>⏻</span><span>Logout</span></div>
+  </div>
+</aside>
+ 
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div>
+      <h1>User Management</h1>
+      <p>Add, edit, approve or block registered users.</p>
+    </div>
+    <button class="btn-primary" onclick="openModal()">➕ Add User</button>
+  </div>
+ 
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="sc"><div class="sc-icon ig">👥</div><div class="sc-info"><h3 id="s-total">0</h3><p>Total Users</p></div></div>
+    <div class="sc"><div class="sc-icon ib">🙋</div><div class="sc-info"><h3 id="s-donors">0</h3><p>Donors</p></div></div>
+    <div class="sc"><div class="sc-icon" style="background:#f3e5f5;">🏢</div><div class="sc-info"><h3 id="s-ngos">0</h3><p>NGOs</p></div></div>
+    <div class="sc"><div class="sc-icon ir">⏳</div><div class="sc-info"><h3 id="s-pending">0</h3><p>Pending</p></div></div>
+  </div>
+ 
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="search-box">🔍 <input type="text" id="searchInput" placeholder="Search by name or email..." oninput="renderTable()"></div>
+    <select class="filter-select" id="roleFilter" onchange="renderTable()">
+      <option value="">All Roles</option>
+      <option value="Donor">Donor</option>
+      <option value="NGO">NGO</option>
+    </select>
+    <select class="filter-select" id="statusFilter" onchange="renderTable()">
+      <option value="">All Status</option>
+      <option value="active">Active</option>
+      <option value="pending">Pending</option>
+      <option value="blocked">Blocked</option>
+    </select>
+  </div>
+ 
+  <!-- TABLE -->
+  <div class="panel">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>User</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Joined</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="userTableBody"></tbody>
+    </table>
+  </div>
+</main>
+ 
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3 id="modalTitle">Add New User</h3>
+    <div class="fg"><label>Full Name</label><input type="text" id="f-name" placeholder="Full Name"></div>
+    <div class="fg"><label>Email</label><input type="email" id="f-email" placeholder="Email Address"></div>
+    <div class="fg"><label>Password</label><input type="password" id="f-password" placeholder="Password"></div>
+    <div class="fg">
+      <label>Role</label>
+      <select id="f-role">
+        <option value="Donor">Donor</option>
+        <option value="NGO">NGO</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>Status</label>
+      <select id="f-status">
+        <option value="active">Active</option>
+        <option value="pending">Pending</option>
+        <option value="blocked">Blocked</option>
+      </select>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveUser()">Save User</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+ 
+<script>
+  const COLORS = ['#43a047','#1976d2','#8e24aa','#f57c00','#e53935','#00897b','#5e35b1'];
+  let editId = null;
+ 
+  // ── SEED DEFAULT DATA ──
+  function seedData() {
+    if (localStorage.getItem('sb_users')) return;
+    const defaults = [
+      { id: 1, name: 'Ahmed Khan',    email: 'ahmed@gmail.com',   role: 'Donor', status: 'active',  joined: '2026-04-10' },
+      { id: 2, name: 'Sara Ali',      email: 'sara@gmail.com',    role: 'Donor', status: 'active',  joined: '2026-05-02' },
+      { id: 3, name: 'Edhi Relief',   email: 'edhi@ngo.com',      role: 'NGO',   status: 'pending', joined: '2026-06-01' },
+      { id: 4, name: 'Saylani Trust', email: 'saylani@ngo.com',   role: 'NGO',   status: 'active',  joined: '2026-03-15' },
+      { id: 5, name: 'M. Raza',       email: 'raza@gmail.com',    role: 'Donor', status: 'pending', joined: '2026-06-05' },
+    ];
+    localStorage.setItem('sb_users', JSON.stringify(defaults));
+  }
+ 
+  function getUsers()         { return JSON.parse(localStorage.getItem('sb_users') || '[]'); }
+  function saveUsers(arr)     { localStorage.setItem('sb_users', JSON.stringify(arr)); }
+  function nextId(arr)        { return arr.length ? Math.max(...arr.map(u => u.id)) + 1 : 1; }
+  function initials(name)     { return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2); }
+  function colorFor(i)        { return COLORS[i % COLORS.length]; }
+ 
+  function updateStats() {
+    const users = getUsers();
+    document.getElementById('s-total').textContent   = users.length;
+    document.getElementById('s-donors').textContent  = users.filter(u => u.role === 'Donor').length;
+    document.getElementById('s-ngos').textContent    = users.filter(u => u.role === 'NGO').length;
+    document.getElementById('s-pending').textContent = users.filter(u => u.status === 'pending').length;
+  }
+ 
+  function renderTable() {
+    const users  = getUsers();
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const role   = document.getElementById('roleFilter').value;
+    const status = document.getElementById('statusFilter').value;
+ 
+    const filtered = users.filter(u => {
+      const matchSearch = u.name.toLowerCase().includes(search) || u.email.toLowerCase().includes(search);
+      const matchRole   = !role   || u.role   === role;
+      const matchStatus = !status || u.status === status;
+      return matchSearch && matchRole && matchStatus;
+    });
+ 
+    const tbody = document.getElementById('userTableBody');
+    if (!filtered.length) {
+      tbody.innerHTML = `<tr class="empty-row"><td colspan="7">No users found.</td></tr>`;
+      return;
+    }
+ 
+    tbody.innerHTML = filtered.map((u, i) => `
+      <tr>
+        <td style="color:var(--muted);font-size:.75rem;">${i + 1}</td>
+        <td>
+          <div class="uc">
+            <div class="ua" style="background:${colorFor(i)};">${initials(u.name)}</div>
+            <span style="font-weight:600;">${u.name}</span>
+          </div>
+        </td>
+        <td style="color:var(--muted);">${u.email}</td>
+        <td><span class="tag ${u.role === 'Donor' ? 'donor' : 'ngo'}">${u.role}</span></td>
+        <td style="color:var(--muted);">${u.joined}</td>
+        <td><span class="tag ${u.status}">${u.status.charAt(0).toUpperCase() + u.status.slice(1)}</span></td>
+        <td>
+          <div class="actions">
+            <button class="ab edit"   onclick="editUser(${u.id})">Edit</button>
+            ${u.status === 'pending'
+              ? `<button class="ab approve" onclick="approveUser(${u.id})">Approve</button>`
+              : `<button class="ab block"   onclick="toggleBlock(${u.id})">${u.status === 'blocked' ? 'Unblock' : 'Block'}</button>`
+            }
+            <button class="ab del" onclick="deleteUser(${u.id})">Delete</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+ 
+  function openModal(prefill = null) {
+    editId = prefill ? prefill.id : null;
+    document.getElementById('modalTitle').textContent = prefill ? 'Edit User' : 'Add New User';
+    document.getElementById('f-name').value     = prefill ? prefill.name   : '';
+    document.getElementById('f-email').value    = prefill ? prefill.email  : '';
+    document.getElementById('f-password').value = '';
+    document.getElementById('f-role').value     = prefill ? prefill.role   : 'Donor';
+    document.getElementById('f-status').value   = prefill ? prefill.status : 'active';
+    document.getElementById('modalOverlay').classList.add('show');
+  }
+ 
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('show');
+    editId = null;
+  }
+ 
+  function saveUser() {
+    const name   = document.getElementById('f-name').value.trim();
+    const email  = document.getElementById('f-email').value.trim();
+    const role   = document.getElementById('f-role').value;
+    const status = document.getElementById('f-status').value;
+    if (!name || !email) { showToast('⚠️ Name and Email are required!'); return; }
+ 
+    let users = getUsers();
+    if (editId) {
+      users = users.map(u => u.id === editId ? { ...u, name, email, role, status } : u);
+      showToast('✅ User updated successfully!');
+    } else {
+      users.push({ id: nextId(users), name, email, role, status, joined: new Date().toISOString().slice(0,10) });
+      showToast('✅ User added successfully!');
+    }
+    saveUsers(users);
+    closeModal();
+    renderTable();
+    updateStats();
+  }
+ 
+  function editUser(id) {
+    const user = getUsers().find(u => u.id === id);
+    if (user) openModal(user);
+  }
+ 
+  function deleteUser(id) {
+    if (!confirm('Delete this user?')) return;
+    saveUsers(getUsers().filter(u => u.id !== id));
+    showToast('🗑️ User deleted.');
+    renderTable(); updateStats();
+  }
+ 
+  function approveUser(id) {
+    saveUsers(getUsers().map(u => u.id === id ? { ...u, status: 'active' } : u));
+    showToast('✅ User approved!');
+    renderTable(); updateStats();
+  }
+ 
+  function toggleBlock(id) {
+    const users = getUsers();
+    const user  = users.find(u => u.id === id);
+    const ns    = user.status === 'blocked' ? 'active' : 'blocked';
+    saveUsers(users.map(u => u.id === id ? { ...u, status: ns } : u));
+    showToast(ns === 'blocked' ? '🚫 User blocked.' : '✅ User unblocked.');
+    renderTable(); updateStats();
+  }
+ 
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+ 
+  // Close modal on backdrop click
+  document.getElementById('modalOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+ 
+  // INIT
+  seedData();
+  renderTable();
+  updateStats();
+</script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pickup Status - Save Bite</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{--green:#2e7d32;--green-light:#43a047;--green-pale:#e8f5e9;--green-accent:#66bb6a;--gray:#f4f6f4;--text:#1b2e1c;--muted:#6b7c6b;--sw:240px;--shadow:0 2px 12px rgba(46,125,50,.10);}
+  body{font-family:'Poppins',sans-serif;background:var(--gray);color:var(--text);display:flex;}
+  .sidebar{width:var(--sw);background:linear-gradient(180deg,#1b5e20,#2e7d32);min-height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;z-index:100;}
+  .sb-logo{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.12);}
+  .logo-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .logo-row .li{width:34px;height:34px;background:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+  .logo-row h2{color:#fff;font-size:1.1rem;font-weight:700;}.logo-row h2 span{color:#66bb6a;}
+  .donor-badge{background:rgba(102,187,106,.2);border:1px solid rgba(102,187,106,.35);border-radius:8px;padding:8px 11px;display:flex;align-items:center;gap:9px;}
+  .d-ava{width:32px;height:32px;border-radius:50%;background:var(--green-accent);font-weight:700;color:#fff;font-size:.8rem;display:flex;align-items:center;justify-content:center;}
+  .donor-badge-info .db-name{color:#fff;font-size:.8rem;font-weight:600;}.donor-badge-info .db-type{color:rgba(255,255,255,.5);font-size:.67rem;}
+  .sb-nav{padding:14px 0;flex:1;}
+  .nl{color:rgba(255,255,255,.4);font-size:.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:8px 20px 3px;}
+  .ni{display:flex;align-items:center;gap:10px;padding:10px 20px;color:rgba(255,255,255,.78);cursor:pointer;transition:all .2s;font-size:.86rem;border-left:3px solid transparent;text-decoration:none;}
+  .ni:hover,.ni.active{background:rgba(255,255,255,.11);color:#fff;border-left-color:#66bb6a;}
+  .ni .ic{font-size:.95rem;width:18px;text-align:center;}
+  .sb-bot{padding:12px 20px;border-top:1px solid rgba(255,255,255,.12);}
+  .lo{display:flex;align-items:center;gap:9px;cursor:pointer;}.lo span{color:rgba(255,255,255,.6);font-size:.82rem;transition:color .2s;}.lo:hover span{color:#ff6b6b;}
+  .main{margin-left:var(--sw);flex:1;padding:26px 28px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+  .topbar h1{font-size:1.35rem;font-weight:700;}.topbar p{color:var(--muted);font-size:.8rem;margin-top:1px;}
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+  .sc{background:#fff;border-radius:13px;padding:16px;box-shadow:var(--shadow);border:1px solid #eaf3ea;display:flex;align-items:center;gap:13px;}
+  .sc-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+  .ig{background:var(--green-pale)}.io{background:#fff3e0}.ib{background:#e3f2fd}.ir{background:#fce4ec}
+  .sc-info h3{font-size:1.35rem;font-weight:700;}.sc-info p{font-size:.73rem;color:var(--muted);margin-top:1px;}
+  .panel{background:#fff;border-radius:14px;padding:20px;box-shadow:var(--shadow);border:1px solid #eaf3ea;margin-bottom:18px;}
+  .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .panel-header h3{font-size:.95rem;font-weight:600;}
+  .data-table{width:100%;border-collapse:collapse;}
+  .data-table th{font-size:.7rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;padding:8px 10px;text-align:left;border-bottom:1.5px solid #eaf3ea;}
+  .data-table td{padding:11px 10px;font-size:.8rem;border-bottom:1px solid #f2f7f2;vertical-align:middle;}
+  .data-table tr:last-child td{border-bottom:none;}.data-table tr:hover td{background:#f8fdf8;}
+  .tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:600;}
+  .tag.scheduled{background:#e8f5e9;color:#2e7d32}.tag.in-progress{background:#fff8e1;color:#f57f17}.tag.completed{background:#e3f2fd;color:#1565c0}.tag.failed{background:#fce4ec;color:#c62828}
+  .empty-row td{text-align:center;padding:30px;color:var(--muted);}
+
+  /* PICKUP CARDS */
+  .pickup-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .pickup-card{background:#fff;border-radius:14px;padding:18px;box-shadow:var(--shadow);border:1.5px solid #eaf3ea;}
+  .pc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .pc-food{font-size:.95rem;font-weight:700;}
+  .pc-details{display:flex;flex-direction:column;gap:6px;}
+  .pc-detail{display:flex;align-items:center;gap:8px;font-size:.77rem;color:var(--muted);}
+  .pc-detail strong{color:var(--text);}
+
+  /* TIMELINE */
+  .timeline{display:flex;flex-direction:column;gap:0;}
+  .tl-item{display:flex;gap:12px;padding-bottom:14px;position:relative;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-dot-col{display:flex;flex-direction:column;align-items:center;}
+  .tl-dot{width:30px;height:30px;border-radius:50%;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;}
+  .tl-dot.done{background:var(--green);color:#fff;}
+  .tl-line{flex:1;width:2px;background:#eaf3ea;margin:3px 0;}
+  .tl-item:last-child .tl-line{display:none;}
+  .tl-text{flex:1;padding-top:4px;}
+  .tl-text h4{font-size:.83rem;font-weight:600;}
+  .tl-text p{font-size:.72rem;color:var(--muted);margin-top:1px;}
+
+  ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:#c8e6c9;border-radius:10px;}
+</style>
+</head>
+<body>
+  
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="logo-row"><div class="li">🍱</div><h2>Save <span>Bite</span></h2></div>
+    <div class="donor-badge"><div class="d-ava">AK</div><div class="donor-badge-info"><div class="db-name">Ahmed Khan</div><div class="db-type">Donor Account</div></div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nl">Menu</div>
+    <a class="nav-item" href="donor/dashboard.php"></a><span class="ic">📊</span> Dashboard</a>
+    <a class="ni" href="donor-donate.html"><span class="ic">🍽️</span> Donate Food</a>
+    <a class="ni" href="donor/my_donations.php"><span class="ic">📋</span> My Donations</a>
+    <a class="ni active" href="donor/pickups.php"><span class="ic">🚚</span> Pickup Status</a>
+    <div class="nl" style="margin-top:10px;">Account</div>
+    <a class="ni" href="donor/profile.php"><span class="ic">👤</span> Profile</a>
+    <a class="ni" href="donor/impact.php"><span class="ic">📈</span> My Impact</a>
+    <a class="ni" href="donor-notifications.html"><span class="ic">🔔</span> Notifications</a>
+  </nav>
+  <div class="sb-bot">
+    <a href="auth/logout.php" style="text-decoration:none;">
+    <div class="lo">
+      <span>⏻</span>
+      <span>Logout</span>
+    </div>
+    </a>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar"><div><h1>Pickup Status 🚚</h1><p>Track who is picking up your donations.</p></div></div>
+
+  <div class="stats-row">
+    <div class="sc"><div class="sc-icon ig">🚚</div><div class="sc-info"><h3>5</h3><p>Total Pickups</p></div></div>
+    <div class="sc"><div class="sc-icon ig">📅</div><div class="sc-info"><h3>2</h3><p>Scheduled</p></div></div>
+    <div class="sc"><div class="sc-icon io">🔄</div><div class="sc-info"><h3>1</h3><p>In Progress</p></div></div>
+    <div class="sc"><div class="sc-icon ib">✅</div><div class="sc-info"><h3>2</h3><p>Completed</p></div></div>
+  </div>
+
+  <!-- ACTIVE PICKUPS -->
+  <div class="panel">
+    <div class="panel-header"><h3>Active Pickups</h3></div>
+    <div class="pickup-grid">
+      <div class="pickup-card">
+        <div class="pc-top">
+          <div class="pc-food">🍛 Biryani — 50 plates</div>
+          <span class="tag scheduled">Scheduled</span>
+        </div>
+        <div class="pc-details">
+          <div class="pc-detail"><span>👤</span> Volunteer: <strong>Ali Khan</strong></div>
+          <div class="pc-detail"><span>🏢</span> NGO: <strong>Edhi Foundation</strong></div>
+          <div class="pc-detail"><span>⏰</span> Pickup: <strong>Today 3:00 PM</strong></div>
+          <div class="pc-detail"><span>📞</span> Contact: <strong>+92 300 1111111</strong></div>
+        </div>
+      </div>
+      <div class="pickup-card">
+        <div class="pc-top">
+          <div class="pc-food">🧆 Samosa — 100 pcs</div>
+          <span class="tag in-progress">In Progress</span>
+        </div>
+        <div class="pc-details">
+          <div class="pc-detail"><span>👤</span> Volunteer: <strong>Zara Aslam</strong></div>
+          <div class="pc-detail"><span>🏢</span> NGO: <strong>Saylani Welfare</strong></div>
+          <div class="pc-detail"><span>⏰</span> Pickup: <strong>Today 5:00 PM</strong></div>
+          <div class="pc-detail"><span>📞</span> Contact: <strong>+92 303 4444444</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PICKUP HISTORY TABLE -->
+  <div class="panel">
+    <div class="panel-header"><h3>Pickup History</h3></div>
+    <table class="data-table">
+      <thead><tr><th>#</th><th>Food</th><th>Volunteer</th><th>NGO</th><th>Date</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td style="color:var(--muted);">1</td><td>🍞 Bread</td><td>Sara Raza</td><td>Edhi Foundation</td><td>Jun 7</td><td><span class="tag completed">Completed</span></td></tr>
+        <tr><td style="color:var(--muted);">2</td><td>🥘 Dal Chawal</td><td>M. Naveed</td><td>Akhuwat NGO</td><td>Jun 6</td><td><span class="tag completed">Completed</span></td></tr>
+        <tr><td style="color:var(--muted);">3</td><td>🍰 Cake</td><td>Ali Khan</td><td>Saylani Welfare</td><td>Jun 4</td><td><span class="tag failed">Failed</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="panel">
+    <div class="panel-header"><h3>Latest Pickup Timeline — Biryani</h3></div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot done">✅</div><div class="tl-line"></div></div>
+        <div class="tl-text"><h4>Donation Posted</h4><p>You posted Biryani — 50 plates · Jun 8, 2:00 PM</p></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot done">✅</div><div class="tl-line"></div></div>
+        <div class="tl-text"><h4>NGO Claimed</h4><p>Edhi Foundation claimed your donation · Jun 8, 2:30 PM</p></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot done">✅</div><div class="tl-line"></div></div>
+        <div class="tl-text"><h4>Volunteer Assigned</h4><p>Ali Khan assigned for pickup · Jun 8, 3:00 PM</p></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot" style="background:#fff8e1;font-size:.7rem;">🔄</div><div class="tl-line"></div></div>
+        <div class="tl-text"><h4>On the Way</h4><p>Volunteer is heading to your location · ETA 15 min</p></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot" style="opacity:.35;">📦</div></div>
+        <div class="tl-text"><h4>Pickup Complete</h4><p style="color:#bdbdbd;">Waiting for completion...</p></div>
+      </div>
+    </div>
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reports - Save Bite Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{--green:#2e7d32;--green-light:#43a047;--green-pale:#e8f5e9;--green-accent:#66bb6a;--gray:#f4f6f4;--text:#1b2e1c;--muted:#6b7c6b;--sw:240px;--shadow:0 2px 12px rgba(46,125,50,.10);}
+  body{font-family:'Poppins',sans-serif;background:var(--gray);color:var(--text);display:flex;}
+
+  /* SIDEBAR */
+  .sidebar{width:var(--sw);background:linear-gradient(180deg,#1b5e20,#2e7d32);min-height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;z-index:100;}
+  .sb-logo{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:10px;}
+  .sb-logo .li{width:34px;height:34px;background:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+  .sb-logo h2{color:#fff;font-size:1.1rem;font-weight:700;}.sb-logo h2 span{color:#66bb6a;}
+  .sb-nav{padding:14px 0;flex:1;}
+  .nl{color:rgba(255,255,255,.4);font-size:.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:8px 20px 3px;}
+  .ni{display:flex;align-items:center;gap:10px;padding:10px 20px;color:rgba(255,255,255,.78);cursor:pointer;transition:all .2s;font-size:.86rem;border-left:3px solid transparent;text-decoration:none;}
+  .ni:hover,.ni.active{background:rgba(255,255,255,.11);color:#fff;border-left-color:#66bb6a;}
+  .ni .ic{font-size:.95rem;width:18px;text-align:center;}
+  .sb-bot{padding:12px 20px;border-top:1px solid rgba(255,255,255,.12);}
+  .lo{display:flex;align-items:center;gap:9px;cursor:pointer;}.lo span{color:rgba(255,255,255,.6);font-size:.82rem;transition:color .2s;}.lo:hover span{color:#ff6b6b;}
+
+  /* MAIN */
+  .main{margin-left:var(--sw);flex:1;padding:26px 28px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+  .topbar h1{font-size:1.35rem;font-weight:700;}.topbar p{color:var(--muted);font-size:.8rem;margin-top:1px;}
+  .topbar-right{display:flex;gap:10px;align-items:center;}
+  .filter-select{background:#fff;border:1.5px solid #dde8dd;border-radius:10px;padding:9px 14px;font-family:'Poppins',sans-serif;font-size:.82rem;color:var(--text);outline:none;cursor:pointer;}
+  .btn-export{background:var(--green);color:#fff;border:none;border-radius:10px;padding:9px 18px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;transition:background .2s;}
+  .btn-export:hover{background:var(--green-light);}
+
+  /* STATS */
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+  .sc{background:#fff;border-radius:13px;padding:18px 16px;box-shadow:var(--shadow);border:1px solid #eaf3ea;}
+  .sc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
+  .sc-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+  .ig{background:var(--green-pale)}.io{background:#fff3e0}.ib{background:#e3f2fd}.ir{background:#fce4ec}
+  .sc h3{font-size:1.5rem;font-weight:700;}
+  .sc p{font-size:.74rem;color:var(--muted);margin-top:2px;}
+  .trend{font-size:.7rem;font-weight:600;padding:3px 8px;border-radius:20px;margin-top:8px;display:inline-block;}
+  .trend.up{background:#e8f5e9;color:#2e7d32;}.trend.down{background:#fce4ec;color:#c62828;}
+
+  /* GRID LAYOUTS */
+  .row-2{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;margin-bottom:18px;}
+  .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:18px;}
+  .row-full{margin-bottom:18px;}
+
+  .panel{background:#fff;border-radius:14px;padding:22px;box-shadow:var(--shadow);border:1px solid #eaf3ea;}
+  .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+  .panel-header h3{font-size:.95rem;font-weight:600;}
+  .ph-right{display:flex;align-items:center;gap:8px;}
+  .tab-btn{background:transparent;border:1.5px solid #dde8dd;border-radius:8px;padding:5px 12px;font-family:'Poppins',sans-serif;font-size:.72rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;}
+  .tab-btn.active,.tab-btn:hover{background:var(--green);color:#fff;border-color:var(--green);}
+
+  /* BAR CHART */
+  .bar-chart-wrap{display:flex;align-items:flex-end;gap:10px;height:160px;padding:0 4px;}
+  .bar-col{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;}
+  .bar-val{font-size:.68rem;font-weight:700;color:var(--green);}
+  .bar{width:100%;border-radius:7px 7px 0 0;transition:all .5s;position:relative;cursor:pointer;}
+  .bar:hover{filter:brightness(1.1);}
+  .bar-lbl{font-size:.65rem;color:var(--muted);}
+
+  /* DONUT CHART */
+  .donut-wrap{display:flex;align-items:center;justify-content:center;gap:28px;margin-top:8px;}
+  .donut-svg{flex-shrink:0;}
+  .donut-legend{display:flex;flex-direction:column;gap:10px;}
+  .legend-item{display:flex;align-items:center;gap:8px;}
+  .legend-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
+  .legend-info .l-label{font-size:.8rem;font-weight:600;}
+  .legend-info .l-val{font-size:.72rem;color:var(--muted);}
+
+  /* LINE CHART */
+  .line-chart-wrap{position:relative;height:140px;margin-top:10px;}
+  .line-chart-wrap svg{width:100%;height:100%;}
+
+  /* PROGRESS BARS */
+  .prog-item{margin-bottom:14px;}
+  .prog-item:last-child{margin-bottom:0;}
+  .prog-label{display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:5px;}
+  .prog-label span:last-child{font-weight:700;color:var(--green);}
+  .prog-track{background:#eaf3ea;border-radius:20px;height:9px;}
+  .prog-fill{height:100%;border-radius:20px;}
+
+  /* TOP TABLE */
+  .mini-table{width:100%;border-collapse:collapse;}
+  .mini-table th{font-size:.68rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;padding:6px 8px;text-align:left;border-bottom:1.5px solid #eaf3ea;}
+  .mini-table td{padding:9px 8px;font-size:.79rem;border-bottom:1px solid #f2f7f2;}
+  .mini-table tr:last-child td{border-bottom:none;}
+  .mini-table tr:hover td{background:#f8fdf8;}
+  .rank{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;}
+  .r1{background:#f9a825;}.r2{background:#90a4ae;}.r3{background:#a1887f;}.rn{background:var(--green-pale);color:var(--green);}
+
+  /* ACTIVITY FEED */
+  .activity-feed{display:flex;flex-direction:column;gap:0;}
+  .af-item{display:flex;gap:12px;padding-bottom:14px;position:relative;}
+  .af-item:last-child{padding-bottom:0;}
+  .af-dot-col{display:flex;flex-direction:column;align-items:center;}
+  .af-dot{width:30px;height:30px;border-radius:50%;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;}
+  .af-line{flex:1;width:2px;background:#eaf3ea;margin:3px 0;}
+  .af-item:last-child .af-line{display:none;}
+  .af-text{flex:1;padding-top:4px;}
+  .af-text .af-title{font-size:.82rem;font-weight:600;}
+  .af-text .af-meta{font-size:.71rem;color:var(--muted);margin-top:1px;}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#fff;padding:12px 20px;border-radius:10px;font-size:.82rem;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;}
+  .toast.show{opacity:1;transform:translateY(0);}
+
+  ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:#c8e6c9;border-radius:10px;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-logo"><div class="li">🍱</div><h2>Save <span>Bite</span></h2></div>
+  <nav class="sb-nav">
+    <div class="nl">Main</div>
+    <a class="ni" href="Admin-panel.html"><span class="ic">📊</span> Dashboard</a>
+    <a class="ni" href="Admin-user.html"><span class="ic">👥</span> Users</a>
+    <a class="ni" href="Admin-ngo.html"><span class="ic">🏢</span> NGOs</a>
+    <a class="ni" href="Admin-donation.html"><span class="ic">🍽️</span> Donations</a>
+    <div class="nl" style="margin-top:10px;">Management</div>
+    <a class="ni" href="Admin-request.html"><span class="ic">📋</span> Requests</a>
+    <a class="ni" href="Admin-pickup.html"><span class="ic">🚚</span> Pickups</a>
+    <a class="ni active" href="admin-report.html"><span class="ic">📈</span> Reports</a>
+    <a class="ni" href="admin-setting.html"><span class="ic">⚙️</span> Settings</a>
+  </nav>
+  <div class="sb-bot"><div class="lo"><span>⏻</span><span>Logout</span></div></div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <div class="topbar">
+    <div>
+      <h1>Reports & Analytics</h1>
+      <p>Platform-wide statistics and performance overview.</p>
+    </div>
+    <div class="topbar-right">
+      <select class="filter-select" id="periodFilter" onchange="updateCharts()">
+        <option value="week">This Week</option>
+        <option value="month" selected>This Month</option>
+        <option value="year">This Year</option>
+      </select>
+      <button class="btn-export" onclick="exportReport()">⬇️ Export Report</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="sc">
+      <div class="sc-top"><div class="sc-icon ig">🍱</div></div>
+      <h3 id="stat-donations">1,284</h3>
+      <p>Total Donations</p>
+      <span class="trend up">↑ 12% vs last month</span>
+    </div>
+    <div class="sc">
+      <div class="sc-top"><div class="sc-icon ib">🍽️</div></div>
+      <h3 id="stat-meals">10,400</h3>
+      <p>Meals Distributed</p>
+      <span class="trend up">↑ 18% vs last month</span>
+    </div>
+    <div class="sc">
+      <div class="sc-top"><div class="sc-icon io">🏢</div></div>
+      <h3 id="stat-ngos">48</h3>
+      <p>Active NGOs</p>
+      <span class="trend up">↑ 4 new this month</span>
+    </div>
+    <div class="sc">
+      <div class="sc-top"><div class="sc-icon ir">♻️</div></div>
+      <h3 id="stat-waste">320 kg</h3>
+      <p>Food Waste Saved</p>
+      <span class="trend up">↑ 9% vs last month</span>
+    </div>
+  </div>
+
+  <!-- BAR CHART + DONUT -->
+  <div class="row-2">
+
+    <!-- DONATIONS BAR CHART -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3>Donations Overview</h3>
+        <div class="ph-right">
+          <button class="tab-btn active" onclick="switchBar('donations',this)">Donations</button>
+          <button class="tab-btn" onclick="switchBar('meals',this)">Meals</button>
+        </div>
+      </div>
+      <div class="bar-chart-wrap" id="barChart"></div>
+      <div style="display:flex;gap:14px;margin-top:12px;">
+        <div style="display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--muted);">
+          <span style="width:10px;height:10px;background:var(--green-light);border-radius:3px;display:inline-block;"></span> Completed
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--muted);">
+          <span style="width:10px;height:10px;background:#c8e6c9;border:1.5px solid #a5d6a7;border-radius:3px;display:inline-block;"></span> Pending
+        </div>
+      </div>
+    </div>
+
+    <!-- DONUT — CATEGORY BREAKDOWN -->
+    <div class="panel">
+      <div class="panel-header"><h3>Food Categories</h3></div>
+      <div class="donut-wrap">
+        <svg class="donut-svg" width="130" height="130" viewBox="0 0 130 130" id="donutSvg"></svg>
+        <div class="donut-legend" id="donutLegend"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LINE CHART + PROGRESS + ACTIVITY -->
+  <div class="row-3">
+
+    <!-- MONTHLY TREND LINE -->
+    <div class="panel">
+      <div class="panel-header"><h3>Monthly Trend</h3></div>
+      <div class="line-chart-wrap">
+        <svg id="lineSvg" viewBox="0 0 300 140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"></svg>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px;">
+        <span style="font-size:.65rem;color:var(--muted);">Jan</span>
+        <span style="font-size:.65rem;color:var(--muted);">Mar</span>
+        <span style="font-size:.65rem;color:var(--muted);">May</span>
+        <span style="font-size:.65rem;color:var(--muted);">Jun</span>
+      </div>
+    </div>
+
+    <!-- NGO PERFORMANCE -->
+    <div class="panel">
+      <div class="panel-header"><h3>NGO Performance</h3></div>
+      <div id="ngoProgress">
+        <div class="prog-item">
+          <div class="prog-label"><span>Edhi Foundation</span><span>342 meals</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:85%;background:#43a047;"></div></div>
+        </div>
+        <div class="prog-item">
+          <div class="prog-label"><span>Saylani Welfare</span><span>280 meals</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:70%;background:#66bb6a;"></div></div>
+        </div>
+        <div class="prog-item">
+          <div class="prog-label"><span>Akhuwat NGO</span><span>194 meals</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:48%;background:#a5d6a7;"></div></div>
+        </div>
+        <div class="prog-item">
+          <div class="prog-label"><span>Shaukat Khanum</span><span>156 meals</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:39%;background:#c8e6c9;"></div></div>
+        </div>
+        <div class="prog-item">
+          <div class="prog-label"><span>Al-Khidmat</span><span>98 meals</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:24%;background:#e8f5e9;border:1px solid #c8e6c9;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT ACTIVITY -->
+    <div class="panel">
+      <div class="panel-header"><h3>Recent Activity</h3></div>
+      <div class="activity-feed">
+        <div class="af-item">
+          <div class="af-dot-col"><div class="af-dot">🍛</div><div class="af-line"></div></div>
+          <div class="af-text"><div class="af-title">50 plates Biryani donated</div><div class="af-meta">Ahmed Khan · Today 2:00 PM</div></div>
+        </div>
+        <div class="af-item">
+          <div class="af-dot-col"><div class="af-dot">✅</div><div class="af-line"></div></div>
+          <div class="af-text"><div class="af-title">Edhi Foundation approved</div><div class="af-meta">Admin · Today 11:30 AM</div></div>
+        </div>
+        <div class="af-item">
+          <div class="af-dot-col"><div class="af-dot">🚚</div><div class="af-line"></div></div>
+          <div class="af-text"><div class="af-title">Pickup completed — Dal</div><div class="af-meta">Ali Khan · Yesterday</div></div>
+        </div>
+        <div class="af-item">
+          <div class="af-dot-col"><div class="af-dot">👤</div><div class="af-line"></div></div>
+          <div class="af-text"><div class="af-title">New donor registered</div><div class="af-meta">M. Raza · Jun 6</div></div>
+        </div>
+        <div class="af-item">
+          <div class="af-dot-col"><div class="af-dot">🏢</div></div>
+          <div class="af-text"><div class="af-title">Saylani NGO request fulfilled</div><div class="af-meta">System · Jun 5</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOP DONORS TABLE -->
+  <div class="row-2">
+    <div class="panel">
+      <div class="panel-header"><h3>Top Donors</h3></div>
+      <table class="mini-table">
+        <thead><tr><th>Rank</th><th>Donor</th><th>Donations</th><th>Meals</th><th>City</th></tr></thead>
+        <tbody>
+          <tr><td><span class="rank r1">1</span></td><td><strong>Ahmed Khan</strong></td><td>28</td><td>480</td><td>Karachi</td></tr>
+          <tr><td><span class="rank r2">2</span></td><td><strong>Sara Ali</strong></td><td>22</td><td>360</td><td>Karachi</td></tr>
+          <tr><td><span class="rank r3">3</span></td><td><strong>M. Raza</strong></td><td>18</td><td>290</td><td>Lahore</td></tr>
+          <tr><td><span class="rank rn">4</span></td><td>Ali Foods</td><td>14</td><td>210</td><td>Islamabad</td></tr>
+          <tr><td><span class="rank rn">5</span></td><td>Bakehouse</td><td>10</td><td>140</td><td>Karachi</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SUMMARY CARDS -->
+    <div class="panel">
+      <div class="panel-header"><h3>Quick Summary</h3></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div style="background:var(--green-pale);border-radius:11px;padding:14px;text-align:center;">
+          <div style="font-size:1.4rem;font-weight:700;color:var(--green);">86%</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:3px;">Claim Rate</div>
+        </div>
+        <div style="background:#e3f2fd;border-radius:11px;padding:14px;text-align:center;">
+          <div style="font-size:1.4rem;font-weight:700;color:#1565c0;">94%</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:3px;">Pickup Success</div>
+        </div>
+        <div style="background:#fff3e0;border-radius:11px;padding:14px;text-align:center;">
+          <div style="font-size:1.4rem;font-weight:700;color:#e65100;">2.4h</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:3px;">Avg Pickup Time</div>
+        </div>
+        <div style="background:#f3e5f5;border-radius:11px;padding:14px;text-align:center;">
+          <div style="font-size:1.4rem;font-weight:700;color:#6a1b9a;">4.8 ⭐</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:3px;">Avg Rating</div>
+        </div>
+        <div style="background:var(--green-pale);border-radius:11px;padding:14px;text-align:center;grid-column:1/-1;">
+          <div style="font-size:1.4rem;font-weight:700;color:var(--green);">50 Cities</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:3px;">Coverage Across Pakistan</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── DATA ──
+  const DATA = {
+    week: {
+      labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+      donations:[12,8,18,6,14,10,4],
+      meals:[200,140,300,100,240,180,60],
+    },
+    month: {
+      labels:['W1','W2','W3','W4'],
+      donations:[80,110,95,130],
+      meals:[1200,1800,1500,2100],
+    },
+    year: {
+      labels:['Jan','Feb','Mar','Apr','May','Jun'],
+      donations:[200,260,310,290,380,420],
+      meals:[3200,4100,4900,4600,6100,6800],
+    }
+  };
+
+  const CATEGORIES = [
+    {label:'Cooked Meal',pct:42,color:'#43a047'},
+    {label:'Bakery',     pct:24,color:'#66bb6a'},
+    {label:'Groceries',  pct:18,color:'#a5d6a7'},
+    {label:'Fruits/Veg', pct:10,color:'#ffb300'},
+    {label:'Other',      pct:6, color:'#90a4ae'},
+  ];
+
+  const MONTHLY = [30,45,60,55,90,130,120,160,140,180,210,200];
+  let barMode = 'donations';
+
+  function getPeriod(){ return document.getElementById('periodFilter').value; }
+
+  // ── BAR CHART ──
+  function renderBar(){
+    const d = DATA[getPeriod()];
+    const vals = barMode === 'donations' ? d.donations : d.meals;
+    const max = Math.max(...vals);
+    const wrap = document.getElementById('barChart');
+    wrap.innerHTML = d.labels.map((lbl,i) => {
+      const h = Math.round((vals[i]/max)*130);
+      const isHigh = vals[i] >= max * 0.6;
+      return `
+        <div class="bar-col">
+          <div class="bar-val">${vals[i]}</div>
+          <div class="bar" style="height:${h}px;background:${isHigh?'#43a047':'#c8e6c9'};"></div>
+          <div class="bar-lbl">${lbl}</div>
+        </div>`;
+    }).join('');
+  }
+
+  function switchBar(mode, btn){
+    barMode = mode;
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderBar();
+  }
+
+  // ── DONUT ──
+  function renderDonut(){
+    const svg = document.getElementById('donutSvg');
+    const legend = document.getElementById('donutLegend');
+    const cx=65,cy=65,r=50,stroke=22;
+    let offset=0;
+    const circ = 2*Math.PI*r;
+    let paths='';
+    CATEGORIES.forEach(c=>{
+      const dash=(c.pct/100)*circ;
+      paths+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${c.color}" stroke-width="${stroke}" stroke-dasharray="${dash} ${circ-dash}" stroke-dashoffset="${-offset}" transform="rotate(-90 ${cx} ${cy})"/>`;
+      offset+=dash;
+    });
+    paths+=`<circle cx="${cx}" cy="${cy}" r="${r-stroke/2-2}" fill="white"/><text x="${cx}" y="${cy-6}" text-anchor="middle" font-family="Poppins" font-size="11" font-weight="700" fill="#1b2e1c">Food</text><text x="${cx}" y="${cy+10}" text-anchor="middle" font-family="Poppins" font-size="11" font-weight="700" fill="#1b2e1c">Types</text>`;
+    svg.innerHTML=paths;
+    legend.innerHTML=CATEGORIES.map(c=>`
+      <div class="legend-item">
+        <div class="legend-dot" style="background:${c.color};"></div>
+        <div class="legend-info">
+          <div class="l-label">${c.label}</div>
+          <div class="l-val">${c.pct}%</div>
+        </div>
+      </div>`).join('');
+  }
+
+  // ── LINE CHART ──
+  function renderLine(){
+    const vals = MONTHLY.slice(0,6);
+    const max  = Math.max(...vals);
+    const w=300,h=120,pad=10;
+    const pts = vals.map((v,i)=>{
+      const x = pad + (i/(vals.length-1))*(w-2*pad);
+      const y = h - pad - ((v/max)*(h-2*pad));
+      return `${x},${y}`;
+    }).join(' ');
+    const areaBot = vals.map((v,i)=>{
+      const x = pad + (i/(vals.length-1))*(w-2*pad);
+      const y = h - pad - ((v/max)*(h-2*pad));
+      return `${x},${y}`;
+    });
+    const areaPath = `M${areaBot[0]} L${areaBot.join(' L')} L${pad+(vals.length-1)/(vals.length-1)*(w-2*pad)},${h-pad} L${pad},${h-pad} Z`;
+    document.getElementById('lineSvg').innerHTML=`
+      <defs>
+        <linearGradient id="lg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#43a047" stop-opacity=".25"/>
+          <stop offset="100%" stop-color="#43a047" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path d="${areaPath}" fill="url(#lg)"/>
+      <polyline points="${pts}" fill="none" stroke="#43a047" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+      ${vals.map((v,i)=>{
+        const x=pad+(i/(vals.length-1))*(w-2*pad);
+        const y=h-pad-((v/max)*(h-2*pad));
+        return `<circle cx="${x}" cy="${y}" r="4" fill="#43a047"/>`;
+      }).join('')}
+    `;
+  }
+
+  function updateCharts(){ renderBar(); }
+
+  function exportReport(){
+    const period = getPeriod();
+    showToast(`📊 Report exported for: ${period.charAt(0).toUpperCase()+period.slice(1)}`);
+  }
+
+  function showToast(msg){
+    const t=document.getElementById('toast');
+    t.textContent=msg;t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),2800);
+  }
+
+  // INIT
+  renderBar();
+  renderDonut();
+  renderLine();
+</script>
+</body>
+</html>

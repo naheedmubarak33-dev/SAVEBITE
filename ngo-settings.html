@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings - Save Bite NGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{--green:#2e7d32;--green-light:#43a047;--green-pale:#e8f5e9;--green-accent:#66bb6a;--gray:#f4f6f4;--text:#1b2e1c;--muted:#6b7c6b;--sw:240px;--shadow:0 2px 12px rgba(46,125,50,.10);}
+  body{font-family:'Poppins',sans-serif;background:var(--gray);color:var(--text);display:flex;}
+  .sidebar{width:var(--sw);background:linear-gradient(180deg,#1b5e20,#2e7d32);min-height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;z-index:100;}
+  .sb-logo{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.12);}
+  .logo-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .logo-row .li{width:34px;height:34px;background:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+  .logo-row h2{color:#fff;font-size:1.1rem;font-weight:700;}.logo-row h2 span{color:#66bb6a;}
+  .ngo-badge{background:rgba(102,187,106,.2);border:1px solid rgba(102,187,106,.35);border-radius:8px;padding:8px 11px;display:flex;align-items:center;gap:9px;}
+  .ngo-ava{width:32px;height:32px;border-radius:8px;background:var(--green-accent);font-size:.95rem;display:flex;align-items:center;justify-content:center;}
+  .ngo-badge-info .nb-name{color:#fff;font-size:.8rem;font-weight:600;}.ngo-badge-info .nb-type{color:rgba(255,255,255,.5);font-size:.67rem;}
+  .sb-nav{padding:14px 0;flex:1;}
+  .nl{color:rgba(255,255,255,.4);font-size:.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:8px 20px 3px;}
+  .ni{display:flex;align-items:center;gap:10px;padding:10px 20px;color:rgba(255,255,255,.78);cursor:pointer;transition:all .2s;font-size:.86rem;border-left:3px solid transparent;text-decoration:none;}
+  .ni:hover,.ni.active{background:rgba(255,255,255,.11);color:#fff;border-left-color:#66bb6a;}
+  .ni .ic{font-size:.95rem;width:18px;text-align:center;}
+  .sb-bot{padding:12px 20px;border-top:1px solid rgba(255,255,255,.12);}
+  .lo{display:flex;align-items:center;gap:9px;cursor:pointer;}.lo span{color:rgba(255,255,255,.6);font-size:.82rem;transition:color .2s;}.lo:hover span{color:#ff6b6b;}
+  .main{margin-left:var(--sw);flex:1;padding:26px 28px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;}
+  .topbar h1{font-size:1.35rem;font-weight:700;}.topbar p{color:var(--muted);font-size:.8rem;margin-top:1px;}
+
+  /* SETTINGS LAYOUT */
+  .settings-layout{display:grid;grid-template-columns:210px 1fr;gap:20px;align-items:start;}
+  .settings-tabs{background:#fff;border-radius:14px;padding:10px;box-shadow:var(--shadow);border:1px solid #eaf3ea;position:sticky;top:20px;}
+  .stab{display:flex;align-items:center;gap:10px;padding:10px 13px;border-radius:9px;cursor:pointer;font-size:.84rem;font-weight:500;color:var(--muted);transition:all .2s;border:none;background:transparent;width:100%;text-align:left;font-family:'Poppins',sans-serif;}
+  .stab:hover{background:var(--green-pale);color:var(--text);}
+  .stab.active{background:var(--green);color:#fff;font-weight:600;}
+  .stab .sic{font-size:.95rem;width:18px;text-align:center;}
+  .stab-div{height:1px;background:#eaf3ea;margin:6px 0;}
+
+  .settings-panel{display:none;}
+  .settings-panel.show{display:block;}
+
+  .panel{background:#fff;border-radius:14px;padding:22px;box-shadow:var(--shadow);border:1px solid #eaf3ea;margin-bottom:16px;}
+  .panel:last-child{margin-bottom:0;}
+  .panel-title{font-size:.95rem;font-weight:700;margin-bottom:4px;}
+  .panel-desc{font-size:.77rem;color:var(--muted);margin-bottom:18px;}
+
+  .fg{display:flex;flex-direction:column;gap:5px;margin-bottom:13px;}
+  .fg label{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+  .fg input,.fg select,.fg textarea{border:1.5px solid #dde8dd;border-radius:9px;padding:9px 12px;font-family:'Poppins',sans-serif;font-size:.82rem;color:var(--text);outline:none;transition:border-color .2s;background:#fff;}
+  .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--green-accent);}
+  .fg-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+  .btn-save{background:var(--green);color:#fff;border:none;border-radius:10px;padding:10px 22px;font-family:'Poppins',sans-serif;font-size:.84rem;font-weight:600;cursor:pointer;transition:background .2s;margin-top:4px;}
+  .btn-save:hover{background:var(--green-light);}
+  .btn-danger{background:#fce4ec;color:#c62828;border:none;border-radius:10px;padding:9px 18px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;}
+  .btn-danger:hover{background:#c62828;color:#fff;}
+
+  /* TOGGLE */
+  .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid #f2f7f2;}
+  .toggle-row:last-child{border-bottom:none;}
+  .toggle-info h4{font-size:.84rem;font-weight:600;}
+  .toggle-info p{font-size:.73rem;color:var(--muted);margin-top:1px;}
+  .toggle{position:relative;width:42px;height:22px;flex-shrink:0;}
+  .toggle input{opacity:0;width:0;height:0;}
+  .toggle-slider{position:absolute;inset:0;background:#dde8dd;border-radius:34px;cursor:pointer;transition:background .3s;}
+  .toggle-slider:before{content:'';position:absolute;width:16px;height:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:transform .3s;box-shadow:0 1px 4px rgba(0,0,0,.15);}
+  .toggle input:checked+.toggle-slider{background:var(--green-light);}
+  .toggle input:checked+.toggle-slider:before{transform:translateX(20px);}
+
+  /* DANGER */
+  .danger-zone{border:1.5px solid #ffcdd2;border-radius:14px;padding:20px;background:#fff9f9;}
+  .dz-title{font-size:.95rem;font-weight:700;color:#c62828;margin-bottom:4px;}
+  .dz-desc{font-size:.76rem;color:#e57373;margin-bottom:14px;}
+  .danger-item{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid #ffebee;}
+  .danger-item:last-child{border-bottom:none;padding-bottom:0;}
+  .danger-item-info h4{font-size:.83rem;font-weight:600;color:#c62828;}
+  .danger-item-info p{font-size:.72rem;color:#e57373;margin-top:1px;}
+
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#fff;padding:12px 20px;border-radius:10px;font-size:.82rem;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;}
+  .toast.show{opacity:1;transform:translateY(0);}
+  ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:#c8e6c9;border-radius:10px;}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="logo-row"><div class="li">🍱</div><h2>Save <span>Bite</span></h2></div>
+    <div class="ngo-badge"><div class="ngo-ava">🏥</div><div class="ngo-badge-info"><div class="nb-name">Edhi Foundation</div><div class="nb-type">NGO Account</div></div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nl">Menu</div>
+    <a class="ni" href="ngo_dashboard.php"><span class="ic">📊</span> Dashboard</a>
+    <a class="ni active" href="browse_food.php"><span class="ic">🍽️</span> Browse Food</a>
+    <a class="ni" href="my_request.php"><span class="ic">📋</span> My Requests</a>
+    <a class="ni" href="pickup.php"><span class="ic">🚚</span> Pickups</a>
+    <div class="nl" style="margin-top:10px;">Account</div>
+    <a class="ni" href="profile.php"><span class="ic">🏢</span> NGO Profile</a>
+    <a class="ni" href="volunteer.php"><span class="ic">👥</span> Volunteers</a>
+    <a class="ni" href="impact.php"><span class="ic">📈</span> My Impact</a>
+    <a class="ni" href="settings.php"><span class="ic">⚙️</span> Settings</a>
+</nav>
+  <div class="sb-bot"><div class="lo"><span>⏻</span><span>Logout</span></div></div>
+</aside>
+
+<main class="main">
+  <div class="topbar"><div><h1>Settings</h1><p>Manage your NGO account preferences.</p></div></div>
+
+  <div class="settings-layout">
+    <!-- TABS -->
+    <div class="settings-tabs">
+      <button class="stab active" onclick="switchTab('account',this)"><span class="sic">🔐</span> Account</button>
+      <button class="stab" onclick="switchTab('notifications',this)"><span class="sic">🔔</span> Notifications</button>
+      <div class="stab-div"></div>
+      <button class="stab" onclick="switchTab('privacy',this)"><span class="sic">🛡️</span> Privacy</button>
+      <button class="stab" onclick="switchTab('danger',this)"><span class="sic">⚠️</span> Danger Zone</button>
+    </div>
+
+    <div id="settings-content">
+
+      <!-- ACCOUNT -->
+      <div class="settings-panel show" id="panel-account">
+        <div class="panel">
+          <div class="panel-title">Account Settings</div>
+          <div class="panel-desc">Update your login credentials and account info.</div>
+          <div class="fg"><label>Display Name</label><input type="text" id="a-name" placeholder="NGO display name"></div>
+          <div class="fg"><label>Account Email</label><input type="email" id="a-email" placeholder="Email"></div>
+          <div class="fg-row">
+            <div class="fg"><label>Phone</label><input type="tel" id="a-phone" placeholder="Phone"></div>
+            <div class="fg"><label>City</label><input type="text" id="a-city" placeholder="City"></div>
+          </div>
+          <button class="btn-save" onclick="saveAccount()">💾 Save Changes</button>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Change Password</div>
+          <div class="panel-desc">Keep your account secure with a strong password.</div>
+          <div class="fg"><label>Current Password</label><input type="password" id="cp-cur" placeholder="Current password"></div>
+          <div class="fg"><label>New Password</label><input type="password" id="cp-new" placeholder="New password"></div>
+          <div class="fg"><label>Confirm Password</label><input type="password" id="cp-conf" placeholder="Confirm new password"></div>
+          <button class="btn-save" onclick="changePass()">🔐 Update Password</button>
+        </div>
+      </div>
+
+      <!-- NOTIFICATIONS -->
+      <div class="settings-panel" id="panel-notifications">
+        <div class="panel">
+          <div class="panel-title">Notification Preferences</div>
+          <div class="panel-desc">Choose which alerts you want to receive.</div>
+          <div class="toggle-row">
+            <div class="toggle-info"><h4>New Food Available</h4><p>Alert when new donations are posted near you.</p></div>
+            <label class="toggle"><input type="checkbox" id="n-food" checked onchange="saveTog()"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info"><h4>Request Approved</h4><p>Notify when admin approves your food request.</p></div>
+            <label class="toggle"><input type="checkbox" id="n-req" checked onchange="saveTog()"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info"><h4>Pickup Reminders</h4><p>Get reminded 1 hour before scheduled pickup.</p></div>
+            <label class="toggle"><input type="checkbox" id="n-pickup" checked onchange="saveTog()"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info"><h4>Volunteer Updates</h4><p>Alerts about volunteer activity.</p></div>
+            <label class="toggle"><input type="checkbox" id="n-vol" onchange="saveTog()"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info"><h4>Weekly Report</h4><p>Receive weekly impact summary via email.</p></div>
+            <label class="toggle"><input type="checkbox" id="n-report" checked onchange="saveTog()"><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRIVACY -->
+      <div class="settings-panel" id="panel-privacy">
+        <div class="panel">
+          <div class="panel-title">Privacy Settings</div>
+          <div class="panel-desc">Control your NGO's visibility and data sharing.</div>
+          <div class="toggle-row">
+            <div class="toggle-info"><h4>Public Profile</h4><p>Allow donors to view your NGO profile.</p></div>
+            <label class="toggle"><input type="checkbox" id="p-public" checked onchange="saveTog()"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info"><h4>Show in NGO Directory</h4><p>List your NGO in the public directory.</p></div>
+            <label class="toggle"><input type="checkbox" id="p-dir" checked onchange="saveTog()"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info"><h4>Share Impact Stats</h4><p>Display your impact numbers publicly.</p></div>
+            <label class="toggle"><input type="checkbox" id="p-stats" onchange="saveTog()"><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- DANGER -->
+      <div class="settings-panel" id="panel-danger">
+        <div class="danger-zone">
+          <div class="dz-title">⚠️ Danger Zone</div>
+          <div class="dz-desc">These actions cannot be undone. Proceed with caution.</div>
+          <div class="danger-item">
+            <div class="danger-item-info"><h4>Clear My Requests</h4><p>Delete all your food request history.</p></div>
+            <button class="btn-danger" onclick="clearData('ngo_requests')">Clear</button>
+          </div>
+          <div class="danger-item">
+            <div class="danger-item-info"><h4>Clear My Pickups</h4><p>Remove all pickup records.</p></div>
+            <button class="btn-danger" onclick="clearData('ngo_pickups')">Clear</button>
+          </div>
+          <div class="danger-item">
+            <div class="danger-item-info"><h4>Remove All Volunteers</h4><p>Delete all volunteer records permanently.</p></div>
+            <button class="btn-danger" onclick="clearData('volunteers')">Clear</button>
+          </div>
+          <div class="danger-item">
+            <div class="danger-item-info"><h4>Deactivate Account</h4><p>Request account deactivation from admin.</p></div>
+            <button class="btn-danger" style="background:#c62828;color:#fff;" onclick="showToast('📧 Deactivation request sent to admin.')">Request</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+  function switchTab(id, btn) {
+    document.querySelectorAll('.settings-panel').forEach(p=>p.classList.remove('show'));
+    document.querySelectorAll('.stab').forEach(b=>b.classList.remove('active'));
+    document.getElementById('panel-'+id).classList.add('show');
+    btn.classList.add('active');
+  }
+
+  function loadAccount() {
+    const d = JSON.parse(localStorage.getItem('sb_ngo_settings') || '{}');
+    document.getElementById('a-name').value  = d.name  || 'Edhi Foundation';
+    document.getElementById('a-email').value = d.email || 'edhi@ngo.com';
+    document.getElementById('a-phone').value = d.phone || '+92 21 1234567';
+    document.getElementById('a-city').value  = d.city  || 'Karachi';
+  }
+
+  function saveAccount() {
+    const d = {
+      name:  document.getElementById('a-name').value.trim(),
+      email: document.getElementById('a-email').value.trim(),
+      phone: document.getElementById('a-phone').value.trim(),
+      city:  document.getElementById('a-city').value.trim(),
+    };
+    localStorage.setItem('sb_ngo_settings', JSON.stringify(d));
+    showToast('✅ Account settings saved!');
+  }
+
+  function changePass() {
+    const cur  = document.getElementById('cp-cur').value;
+    const nw   = document.getElementById('cp-new').value;
+    const conf = document.getElementById('cp-conf').value;
+    if (!cur||!nw||!conf) { showToast('⚠️ All fields required!'); return; }
+    if (nw !== conf) { showToast('❌ Passwords do not match!'); return; }
+    if (nw.length < 6) { showToast('⚠️ Min 6 characters!'); return; }
+    document.getElementById('cp-cur').value = '';
+    document.getElementById('cp-new').value = '';
+    document.getElementById('cp-conf').value = '';
+    showToast('✅ Password updated!');
+  }
+
+  const TOG_IDS = ['n-food','n-req','n-pickup','n-vol','n-report','p-public','p-dir','p-stats'];
+  function saveTog() {
+    const s = {};
+    TOG_IDS.forEach(id => { const el=document.getElementById(id); if(el) s[id]=el.checked; });
+    localStorage.setItem('sb_ngo_toggles', JSON.stringify(s));
+    showToast('✅ Setting saved!');
+  }
+  function loadTog() {
+    const s = JSON.parse(localStorage.getItem('sb_ngo_toggles') || '{}');
+    TOG_IDS.forEach(id => { const el=document.getElementById(id); if(el && s[id]!==undefined) el.checked=s[id]; });
+  }
+
+  function clearData(key) {
+    if (!confirm('Are you sure? This cannot be undone.')) return;
+    localStorage.removeItem('sb_' + key);
+    showToast('🗑️ Data cleared!');
+  }
+
+  function showToast(msg) {
+    const t=document.getElementById('toast');
+    t.textContent=msg; t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),2800);
+  }
+
+  loadAccount(); loadTog();
+</script>
+</body>
+</html>

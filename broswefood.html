@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browse Food - Save Bite NGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{--green:#2e7d32;--green-light:#43a047;--green-pale:#e8f5e9;--green-accent:#66bb6a;--gray:#f4f6f4;--text:#1b2e1c;--muted:#6b7c6b;--sw:240px;--shadow:0 2px 12px rgba(46,125,50,.10);}
+  body{font-family:'Poppins',sans-serif;background:var(--gray);color:var(--text);display:flex;}
+
+  /* SIDEBAR */
+  .sidebar{width:var(--sw);background:linear-gradient(180deg,#1b5e20,#2e7d32);min-height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;z-index:100;}
+  .sb-logo{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.12);}
+  .logo-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .logo-row .li{width:34px;height:34px;background:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+  .logo-row h2{color:#fff;font-size:1.1rem;font-weight:700;}.logo-row h2 span{color:#66bb6a;}
+  .ngo-badge{background:rgba(102,187,106,.2);border:1px solid rgba(102,187,106,.35);border-radius:8px;padding:8px 11px;display:flex;align-items:center;gap:9px;}
+  .ngo-ava{width:32px;height:32px;border-radius:8px;background:var(--green-accent);font-size:.95rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .ngo-badge-info .nb-name{color:#fff;font-size:.8rem;font-weight:600;}
+  .ngo-badge-info .nb-type{color:rgba(255,255,255,.5);font-size:.67rem;}
+  .sb-nav{padding:14px 0;flex:1;}
+  .nl{color:rgba(255,255,255,.4);font-size:.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:8px 20px 3px;}
+  .ni{display:flex;align-items:center;gap:10px;padding:10px 20px;color:rgba(255,255,255,.78);cursor:pointer;transition:all .2s;font-size:.86rem;border-left:3px solid transparent;text-decoration:none;}
+  .ni:hover,.ni.active{background:rgba(255,255,255,.11);color:#fff;border-left-color:#66bb6a;}
+  .ni .ic{font-size:.95rem;width:18px;text-align:center;}
+  .sb-bot{padding:12px 20px;border-top:1px solid rgba(255,255,255,.12);}
+  .lo{display:flex;align-items:center;gap:9px;cursor:pointer;}.lo span{color:rgba(255,255,255,.6);font-size:.82rem;transition:color .2s;}.lo:hover span{color:#ff6b6b;}
+
+  /* MAIN */
+  .main{margin-left:var(--sw);flex:1;padding:26px 28px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+  .topbar h1{font-size:1.35rem;font-weight:700;}.topbar p{color:var(--muted);font-size:.8rem;margin-top:1px;}
+
+  /* TOOLBAR */
+  .toolbar{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+  .search-box{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #dde8dd;border-radius:10px;padding:8px 14px;flex:1;min-width:200px;}
+  .search-box input{border:none;outline:none;font-family:'Poppins',sans-serif;font-size:.82rem;color:var(--text);background:transparent;width:100%;}
+  .filter-select{background:#fff;border:1.5px solid #dde8dd;border-radius:10px;padding:9px 12px;font-family:'Poppins',sans-serif;font-size:.82rem;color:var(--text);outline:none;cursor:pointer;}
+
+  /* STATS */
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+  .sc{background:#fff;border-radius:13px;padding:16px;box-shadow:var(--shadow);border:1px solid #eaf3ea;display:flex;align-items:center;gap:13px;}
+  .sc-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+  .ig{background:var(--green-pale)}.io{background:#fff3e0}.ib{background:#e3f2fd}.ir{background:#fce4ec}
+  .sc-info h3{font-size:1.35rem;font-weight:700;}.sc-info p{font-size:.73rem;color:var(--muted);margin-top:1px;}
+
+  /* FOOD GRID */
+  .food-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  .food-card{background:#fff;border-radius:14px;padding:18px;box-shadow:var(--shadow);border:1.5px solid #eaf3ea;transition:all .25s;cursor:pointer;}
+  .food-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(46,125,50,.13);border-color:var(--green-accent);}
+  .fc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
+  .fc-emoji{width:50px;height:50px;background:var(--green-pale);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;}
+  .tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:600;}
+  .tag.available{background:#e8f5e9;color:#2e7d32}
+  .tag.urgent{background:#fce4ec;color:#c62828}
+  .tag.claimed{background:#e3f2fd;color:#1565c0}
+  .fc-name{font-size:1rem;font-weight:700;margin-bottom:4px;}
+  .fc-donor{font-size:.76rem;color:var(--muted);margin-bottom:10px;}
+  .fc-details{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+  .fc-detail{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--muted);}
+  .fc-detail span:first-child{font-size:.9rem;}
+  .fc-detail strong{color:var(--text);}
+  .claim-btn{width:100%;background:var(--green);color:#fff;border:none;border-radius:9px;padding:9px 0;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:background .2s;}
+  .claim-btn:hover{background:var(--green-light);}
+  .claim-btn:disabled{background:#c8e6c9;cursor:not-allowed;}
+
+  /* MODAL */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;}
+  .modal-overlay.show{display:flex;}
+  .modal{background:#fff;border-radius:16px;padding:28px;width:100%;max-width:420px;box-shadow:0 8px 40px rgba(0,0,0,.18);}
+  .modal h3{font-size:1.05rem;font-weight:700;margin-bottom:6px;}
+  .modal p{font-size:.82rem;color:var(--muted);margin-bottom:18px;}
+  .modal-food-info{background:var(--green-pale);border-radius:10px;padding:14px;margin-bottom:18px;display:flex;align-items:center;gap:12px;}
+  .modal-food-info .mfi-emoji{font-size:1.6rem;}
+  .modal-food-info .mfi-name{font-size:.9rem;font-weight:700;}
+  .modal-food-info .mfi-meta{font-size:.74rem;color:var(--muted);margin-top:2px;}
+  .fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+  .fg label{font-size:.73rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+  .fg input,.fg textarea{border:1.5px solid #dde8dd;border-radius:9px;padding:9px 12px;font-family:'Poppins',sans-serif;font-size:.82rem;color:var(--text);outline:none;transition:border-color .2s;}
+  .fg input:focus,.fg textarea:focus{border-color:var(--green-accent);}
+  .fg textarea{resize:vertical;min-height:60px;}
+  .modal-btns{display:flex;gap:10px;justify-content:flex-end;}
+  .btn-cancel{background:#f4f6f4;color:var(--text);border:none;border-radius:9px;padding:9px 18px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;}
+  .btn-confirm{background:var(--green);color:#fff;border:none;border-radius:9px;padding:9px 20px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:background .2s;}
+  .btn-confirm:hover{background:var(--green-light);}
+
+  .empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
+  .empty-state .es-icon{font-size:3rem;margin-bottom:12px;}
+  .empty-state h3{font-size:1rem;font-weight:600;margin-bottom:6px;}
+  .empty-state p{font-size:.8rem;}
+
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#fff;padding:12px 20px;border-radius:10px;font-size:.82rem;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;}
+  .toast.show{opacity:1;transform:translateY(0);}
+  ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:#c8e6c9;border-radius:10px;}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="logo-row"><div class="li">🍱</div><h2>Save <span>Bite</span></h2></div>
+    <div class="ngo-badge"><div class="ngo-ava">🏥</div><div class="ngo-badge-info"><div class="nb-name">Edhi Foundation</div><div class="nb-type">NGO Account</div></div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nl">Menu</div>
+    <a class="ni" href="NGO-panel.html"><span class="ic">📊</span> Dashboard</a>
+    <a class="ni active" href="broswefood.html"><span class="ic">🍽️</span> Browse Food</a>
+    <a class="ni" href="ngo-req.html"><span class="ic">📋</span> My Requests</a>
+    <a class="ni" href="ngo-pickup.html"><span class="ic">🚚</span> Pickups</a>
+    <div class="nl" style="margin-top:10px;">Account</div>
+    <a class="ni" href="ngo-profile.html"><span class="ic">🏢</span> NGO Profile</a>
+    <a class="ni" href="ngo-volunteer.html"><span class="ic">👥</span> Volunteers</a>
+    <a class="ni" href="ngo-impact.html"><span class="ic">📈</span> My Impact</a>
+    <a class="ni" href="ngo-setting.html"><span class="ic">⚙️</span> Settings</a>
+  </nav>
+  <div class="sb-bot"><div class="lo"><span>⏻</span><span>Logout</span></div></div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div><h1>Browse Available Food</h1><p>Claim food donations near you before they expire.</p></div>
+  </div>
+
+  <div class="stats-row">
+    <div class="sc"><div class="sc-icon ig">🍱</div><div class="sc-info"><h3 id="s-total">0</h3><p>Total Available</p></div></div>
+    <div class="sc"><div class="sc-icon ir">⚠️</div><div class="sc-info"><h3 id="s-urgent">0</h3><p>Expiring Soon</p></div></div>
+    <div class="sc"><div class="sc-icon io">🏙️</div><div class="sc-info"><h3 id="s-cities">3</h3><p>Cities</p></div></div>
+    <div class="sc"><div class="sc-icon ib">📦</div><div class="sc-info"><h3 id="s-claimed">0</h3><p>My Claims Today</p></div></div>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-box">🔍 <input type="text" id="searchInput" placeholder="Search food name or location..." oninput="renderCards()"></div>
+    <select class="filter-select" id="catFilter" onchange="renderCards()">
+      <option value="">All Categories</option>
+      <option value="Cooked Meal">Cooked Meal</option>
+      <option value="Bakery">Bakery</option>
+      <option value="Groceries">Groceries</option>
+      <option value="Fruits & Veg">Fruits & Veg</option>
+      <option value="Other">Other</option>
+    </select>
+    <select class="filter-select" id="urgencyFilter" onchange="renderCards()">
+      <option value="">All</option>
+      <option value="urgent">Expiring Soon</option>
+      <option value="available">Normal</option>
+    </select>
+  </div>
+
+  <div id="foodGrid" class="food-grid"></div>
+</main>
+
+<!-- CLAIM MODAL -->
+<div class="modal-overlay" id="claimModal">
+  <div class="modal">
+    <h3>Confirm Food Claim 🍱</h3>
+    <p>You are about to claim this food donation for your NGO.</p>
+    <div class="modal-food-info">
+      <span class="mfi-emoji" id="m-emoji">🍛</span>
+      <div>
+        <div class="mfi-name" id="m-name">-</div>
+        <div class="mfi-meta" id="m-meta">-</div>
+      </div>
+    </div>
+    <div class="fg"><label>Pickup Notes (optional)</label><textarea id="m-notes" placeholder="Any special instructions..."></textarea></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-confirm" onclick="confirmClaim()">✅ Confirm Claim</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+  const EMOJI_MAP = {'Cooked Meal':'🍛','Bakery':'🍞','Groceries':'🥫','Fruits & Veg':'🥦','Other':'🍱'};
+  let claimTarget = null;
+
+  function seedDonations() {
+    if (localStorage.getItem('sb_donations')) return;
+    const d = [
+      {id:1,food:'Biryani',cat:'Cooked Meal',qty:50,donor:'Ahmed Khan',loc:'Gulshan, Karachi',expiry:'2026-06-08T18:00',status:'available',notes:'',date:'2026-06-08'},
+      {id:2,food:'Bread Loaves',cat:'Bakery',qty:30,donor:'Sara Ali',loc:'DHA, Karachi',expiry:'2026-06-08T16:00',status:'available',notes:'Keep dry',date:'2026-06-07'},
+      {id:3,food:'Dal Chawal',cat:'Cooked Meal',qty:20,donor:'M. Raza',loc:'North Nazimabad',expiry:'2026-06-09T12:00',status:'available',notes:'',date:'2026-06-06'},
+      {id:4,food:'Samosa',cat:'Bakery',qty:100,donor:'Ali Foods',loc:'Saddar, Karachi',expiry:'2026-06-08T20:00',status:'available',notes:'',date:'2026-06-05'},
+      {id:5,food:'Apples',cat:'Fruits & Veg',qty:25,donor:'Fruit Farm',loc:'Clifton, Karachi',expiry:'2026-06-10T10:00',status:'available',notes:'',date:'2026-06-06'},
+      {id:6,food:'Rice Bags',cat:'Groceries',qty:10,donor:'Al-Noor Store',loc:'Nazimabad',expiry:'2026-06-15T00:00',status:'available',notes:'',date:'2026-06-05'},
+    ];
+    localStorage.setItem('sb_donations', JSON.stringify(d));
+  }
+
+  function getDonations() { return JSON.parse(localStorage.getItem('sb_donations') || '[]').filter(d => d.status === 'available'); }
+
+  function isUrgent(expiry) {
+    const diff = new Date(expiry) - new Date();
+    return diff > 0 && diff < 1000 * 60 * 60 * 6;
+  }
+
+  function updateStats() {
+    const all = getDonations();
+    document.getElementById('s-total').textContent  = all.length;
+    document.getElementById('s-urgent').textContent = all.filter(d => isUrgent(d.expiry)).length;
+    const claims = JSON.parse(localStorage.getItem('sb_ngo_claims_today') || '[]');
+    document.getElementById('s-claimed').textContent = claims.length;
+  }
+
+  function renderCards() {
+    const all     = getDonations();
+    const search  = document.getElementById('searchInput').value.toLowerCase();
+    const cat     = document.getElementById('catFilter').value;
+    const urgency = document.getElementById('urgencyFilter').value;
+
+    const filtered = all.filter(d => {
+      const ms  = d.food.toLowerCase().includes(search) || d.loc.toLowerCase().includes(search);
+      const mc  = !cat     || d.cat === cat;
+      const mu  = !urgency || (urgency === 'urgent' ? isUrgent(d.expiry) : !isUrgent(d.expiry));
+      return ms && mc && mu;
+    });
+
+    const grid = document.getElementById('foodGrid');
+    if (!filtered.length) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="es-icon">🍽️</div><h3>No food available</h3><p>Check back later for new donations.</p></div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map(d => {
+      const urgent = isUrgent(d.expiry);
+      const exp    = new Date(d.expiry).toLocaleString('en-PK',{dateStyle:'medium',timeStyle:'short'});
+      return `
+        <div class="food-card">
+          <div class="fc-top">
+            <div class="fc-emoji">${EMOJI_MAP[d.cat]||'🍱'}</div>
+            <span class="tag ${urgent?'urgent':'available'}">${urgent?'⚠️ Expiring Soon':'✅ Available'}</span>
+          </div>
+          <div class="fc-name">${d.food}</div>
+          <div class="fc-donor">by ${d.donor}</div>
+          <div class="fc-details">
+            <div class="fc-detail"><span>📦</span> Quantity: <strong>${d.qty} servings</strong></div>
+            <div class="fc-detail"><span>📍</span> <strong>${d.loc}</strong></div>
+            <div class="fc-detail"><span>⏰</span> Expires: <strong>${exp}</strong></div>
+            <div class="fc-detail"><span>🏷️</span> ${d.cat}</div>
+          </div>
+          <button class="claim-btn" onclick="openClaim(${d.id})">🙌 Claim This Food</button>
+        </div>`;
+    }).join('');
+  }
+
+  function openClaim(id) {
+    const d = JSON.parse(localStorage.getItem('sb_donations') || '[]').find(x => x.id === id);
+    if (!d) return;
+    claimTarget = d;
+    document.getElementById('m-emoji').textContent = EMOJI_MAP[d.cat] || '🍱';
+    document.getElementById('m-name').textContent  = d.food + ' — ' + d.qty + ' servings';
+    document.getElementById('m-meta').textContent  = '📍 ' + d.loc + ' · by ' + d.donor;
+    document.getElementById('m-notes').value = '';
+    document.getElementById('claimModal').classList.add('show');
+  }
+
+  function closeModal() { document.getElementById('claimModal').classList.remove('show'); claimTarget = null; }
+
+  function confirmClaim() {
+    if (!claimTarget) return;
+    // Mark donation as claimed
+    const dons = JSON.parse(localStorage.getItem('sb_donations') || '[]');
+    const updated = dons.map(d => d.id === claimTarget.id ? {...d, status:'claimed'} : d);
+    localStorage.setItem('sb_donations', JSON.stringify(updated));
+
+    // Add to NGO requests
+    const reqs = JSON.parse(localStorage.getItem('sb_requests') || '[]');
+    const newReq = {
+      id: reqs.length ? Math.max(...reqs.map(r=>r.id))+1 : 1,
+      ngo:'Edhi Foundation', food:claimTarget.food,
+      qty:claimTarget.qty, donor:claimTarget.donor,
+      date:new Date().toISOString().slice(0,10), status:'pending'
+    };
+    reqs.push(newReq);
+    localStorage.setItem('sb_requests', JSON.stringify(reqs));
+
+    // Track today's claims
+    const today = JSON.parse(localStorage.getItem('sb_ngo_claims_today') || '[]');
+    today.push(claimTarget.id);
+    localStorage.setItem('sb_ngo_claims_today', JSON.stringify(today));
+
+    closeModal();
+    renderCards();
+    updateStats();
+    showToast('✅ Food claimed! Check My Requests.');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  document.getElementById('claimModal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+
+  seedDonations(); renderCards(); updateStats();
+</script>
+</body>
+</html>

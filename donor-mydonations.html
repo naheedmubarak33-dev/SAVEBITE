@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Donations - Save Bite</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{--green:#2e7d32;--green-light:#43a047;--green-pale:#e8f5e9;--green-accent:#66bb6a;--gray:#f4f6f4;--text:#1b2e1c;--muted:#6b7c6b;--sw:240px;--shadow:0 2px 12px rgba(46,125,50,.10);}
+  body{font-family:'Poppins',sans-serif;background:var(--gray);color:var(--text);display:flex;}
+  .sidebar{width:var(--sw);background:linear-gradient(180deg,#1b5e20,#2e7d32);min-height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;z-index:100;}
+  .sb-logo{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.12);}
+  .logo-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .logo-row .li{width:34px;height:34px;background:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+  .logo-row h2{color:#fff;font-size:1.1rem;font-weight:700;}.logo-row h2 span{color:#66bb6a;}
+  .donor-badge{background:rgba(102,187,106,.2);border:1px solid rgba(102,187,106,.35);border-radius:8px;padding:8px 11px;display:flex;align-items:center;gap:9px;}
+  .d-ava{width:32px;height:32px;border-radius:50%;background:var(--green-accent);font-weight:700;color:#fff;font-size:.8rem;display:flex;align-items:center;justify-content:center;}
+  .donor-badge-info .db-name{color:#fff;font-size:.8rem;font-weight:600;}.donor-badge-info .db-type{color:rgba(255,255,255,.5);font-size:.67rem;}
+  .sb-nav{padding:14px 0;flex:1;}
+  .nl{color:rgba(255,255,255,.4);font-size:.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:8px 20px 3px;}
+  .ni{display:flex;align-items:center;gap:10px;padding:10px 20px;color:rgba(255,255,255,.78);cursor:pointer;transition:all .2s;font-size:.86rem;border-left:3px solid transparent;text-decoration:none;}
+  .ni:hover,.ni.active{background:rgba(255,255,255,.11);color:#fff;border-left-color:#66bb6a;}
+  .ni .ic{font-size:.95rem;width:18px;text-align:center;}
+  .sb-bot{padding:12px 20px;border-top:1px solid rgba(255,255,255,.12);}
+  .lo{display:flex;align-items:center;gap:9px;cursor:pointer;}.lo span{color:rgba(255,255,255,.6);font-size:.82rem;transition:color .2s;}.lo:hover span{color:#ff6b6b;}
+  .main{margin-left:var(--sw);flex:1;padding:26px 28px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+  .topbar h1{font-size:1.35rem;font-weight:700;}.topbar p{color:var(--muted);font-size:.8rem;margin-top:1px;}
+  .btn-primary{background:var(--green);color:#fff;border:none;border-radius:10px;padding:9px 18px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:7px;transition:background .2s;}
+  .btn-primary:hover{background:var(--green-light);}
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+  .sc{background:#fff;border-radius:13px;padding:16px;box-shadow:var(--shadow);border:1px solid #eaf3ea;display:flex;align-items:center;gap:13px;}
+  .sc-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+  .ig{background:var(--green-pale)}.io{background:#fff3e0}.ib{background:#e3f2fd}.ir{background:#fce4ec}
+  .sc-info h3{font-size:1.35rem;font-weight:700;}.sc-info p{font-size:.73rem;color:var(--muted);margin-top:1px;}
+  .toolbar{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
+  .search-box{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #dde8dd;border-radius:10px;padding:8px 14px;flex:1;min-width:200px;}
+  .search-box input{border:none;outline:none;font-family:'Poppins',sans-serif;font-size:.82rem;color:var(--text);background:transparent;width:100%;}
+  .filter-select{background:#fff;border:1.5px solid #dde8dd;border-radius:10px;padding:9px 12px;font-family:'Poppins',sans-serif;font-size:.82rem;color:var(--text);outline:none;cursor:pointer;}
+  .panel{background:#fff;border-radius:14px;padding:20px;box-shadow:var(--shadow);border:1px solid #eaf3ea;}
+  .data-table{width:100%;border-collapse:collapse;}
+  .data-table th{font-size:.7rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;padding:8px 10px;text-align:left;border-bottom:1.5px solid #eaf3ea;}
+  .data-table td{padding:11px 10px;font-size:.8rem;border-bottom:1px solid #f2f7f2;vertical-align:middle;}
+  .data-table tr:last-child td{border-bottom:none;}.data-table tr:hover td{background:#f8fdf8;}
+  .tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:600;}
+  .tag.available{background:#e8f5e9;color:#2e7d32}.tag.claimed{background:#e3f2fd;color:#1565c0}.tag.pending{background:#fff8e1;color:#f57f17}.tag.expired{background:#fce4ec;color:#c62828}
+  .ab{border:none;border-radius:6px;padding:4px 11px;font-family:'Poppins',sans-serif;font-size:.7rem;font-weight:600;cursor:pointer;transition:opacity .2s;}
+  .ab:hover{opacity:.75;}.ab.edit{background:#e3f2fd;color:#1565c0;}.ab.del{background:#fce4ec;color:#c62828;}
+  .actions{display:flex;gap:5px;}
+  .empty-row td{text-align:center;padding:30px;color:var(--muted);}
+
+  /* EDIT MODAL */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;}
+  .modal-overlay.show{display:flex;}
+  .modal{background:#fff;border-radius:16px;padding:28px;width:100%;max-width:480px;box-shadow:0 8px 40px rgba(0,0,0,.18);}
+  .modal h3{font-size:1.05rem;font-weight:700;margin-bottom:18px;}
+  .fg{display:flex;flex-direction:column;gap:5px;margin-bottom:13px;}
+  .fg label{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+  .fg input,.fg select,.fg textarea{border:1.5px solid #dde8dd;border-radius:9px;padding:9px 12px;font-family:'Poppins',sans-serif;font-size:.82rem;color:var(--text);outline:none;transition:border-color .2s;}
+  .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--green-accent);}
+  .fg textarea{resize:vertical;min-height:60px;}
+  .fg-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .modal-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:4px;}
+  .btn-cancel{background:#f4f6f4;color:var(--text);border:none;border-radius:9px;padding:9px 18px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;}
+  .btn-save{background:var(--green);color:#fff;border:none;border-radius:9px;padding:9px 20px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;}
+  .btn-save:hover{background:var(--green-light);}
+
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#fff;padding:12px 20px;border-radius:10px;font-size:.82rem;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;}
+  .toast.show{opacity:1;transform:translateY(0);}
+  ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:#c8e6c9;border-radius:10px;}
+</style>
+</head>
+<body>
+  <a href="auth/logout.php"></a>
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="logo-row"><div class="li">🍱</div><h2>Save <span>Bite</span></h2></div>
+    <div class="donor-badge"><div class="d-ava">AK</div><div class="donor-badge-info"><div class="db-name">Ahmed Khan</div><div class="db-type">Donor Account</div></div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nl">Menu</div>
+    <a class="nav-item" href="donor/dashboard.php"></a><span class="ic">📊</span> Dashboard</a>
+    <a class="ni" href="donor-donate.html"><span class="ic">🍽️</span> Donate Food</a>
+    <a class="ni active" href="donor/my_donations.php"><span class="ic">📋</span> My Donations</a>
+    <a class="ni" href="donor/pickups.php"><span class="ic">🚚</span> Pickup Status</a>
+    <div class="nl" style="margin-top:10px;">Account</div>
+    <a class="ni" href="donor/profile.php"><span class="ic">👤</span> Profile</a>
+    <a class="ni" href="donor/impact.php"><span class="ic">📈</span> My Impact</a>
+    <a class="ni" href="donor/notifications.php"><span class="ic">🔔</span> Notifications</a>
+  </nav>
+  <div class="sb-bot">
+    <a href="auth/logout.php" style="text-decoration:none;">
+    <div class="lo">
+      <span>⏻</span>
+      <span>Logout</span>
+    </div>
+  </a>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div><h1>My Donations</h1><p>View, edit and track all your food donations.</p></div>
+    <a class="btn-primary" href="donor-donate.html">➕ New Donation</a>
+  </div>
+
+  <div class="stats-row">
+    <div class="sc"><div class="sc-icon ig">🍱</div><div class="sc-info"><h3 id="s-total">0</h3><p>Total</p></div></div>
+    <div class="sc"><div class="sc-icon ig">✅</div><div class="sc-info"><h3 id="s-available">0</h3><p>Available</p></div></div>
+    <div class="sc"><div class="sc-icon ib">📦</div><div class="sc-info"><h3 id="s-claimed">0</h3><p>Claimed</p></div></div>
+    <div class="sc"><div class="sc-icon ir">⌛</div><div class="sc-info"><h3 id="s-expired">0</h3><p>Expired</p></div></div>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-box">🔍 <input type="text" id="searchInput" placeholder="Search food name..." oninput="renderTable()"></div>
+    <select class="filter-select" id="statusFilter" onchange="renderTable()">
+      <option value="">All Status</option>
+      <option value="available">Available</option>
+      <option value="claimed">Claimed</option>
+      <option value="pending">Pending</option>
+      <option value="expired">Expired</option>
+    </select>
+    <select class="filter-select" id="catFilter" onchange="renderTable()">
+      <option value="">All Categories</option>
+      <option value="Cooked Meal">Cooked Meal</option>
+      <option value="Bakery Items">Bakery Items</option>
+      <option value="Raw Groceries">Raw Groceries</option>
+      <option value="Fruits & Vegetables">Fruits & Veg</option>
+      <option value="Other">Other</option>
+    </select>
+  </div>
+
+  <div class="panel">
+    <table class="data-table">
+      <thead>
+        <tr><th>#</th><th>Food</th><th>Category</th><th>Qty</th><th>Location</th><th>Date</th><th>Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody id="donBody"></tbody>
+    </table>
+  </div>
+</main>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3>Edit Donation ✏️</h3>
+    <div class="fg-row">
+      <div class="fg"><label>Food Name</label><input type="text" id="e-food"></div>
+      <div class="fg"><label>Category</label>
+        <select id="e-cat">
+          <option>Cooked Meal</option><option>Bakery Items</option>
+          <option>Raw Groceries</option><option>Fruits & Vegetables</option><option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg-row">
+      <div class="fg"><label>Quantity</label><input type="number" id="e-qty"></div>
+      <div class="fg"><label>Expiry Time</label><input type="datetime-local" id="e-expiry"></div>
+    </div>
+    <div class="fg"><label>Pickup Location</label><input type="text" id="e-loc"></div>
+    <div class="fg"><label>Notes</label><textarea id="e-notes"></textarea></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveEdit()">💾 Save</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+  const EMOJI={'Cooked Meal':'🍛','Bakery Items':'🍞','Raw Groceries':'🥫','Fruits & Vegetables':'🥦','Drinks / Beverages':'🥤','Other':'🍱'};
+  let editId=null;
+
+  function getDons(){return JSON.parse(localStorage.getItem('sb_my_donations')||'[]');}
+  function saveDons(arr){localStorage.setItem('sb_my_donations',JSON.stringify(arr));}
+
+  function seed(){
+    if(localStorage.getItem('sb_my_donations'))return;
+    saveDons([
+      {id:1,food:'Biryani',cat:'Cooked Meal',qty:50,serves:200,loc:'Gulshan, Karachi',expiry:'2026-06-08T18:00',phone:'+92 300 1111111',notes:'',date:'2026-06-08',status:'available'},
+      {id:2,food:'Bread Loaves',cat:'Bakery Items',qty:30,serves:60,loc:'DHA, Karachi',expiry:'2026-06-07T16:00',phone:'+92 300 1111111',notes:'Keep dry',date:'2026-06-07',status:'claimed'},
+      {id:3,food:'Dal Chawal',cat:'Cooked Meal',qty:20,serves:80,loc:'North Nazimabad',expiry:'2026-06-06T12:00',phone:'+92 300 1111111',notes:'',date:'2026-06-06',status:'claimed'},
+      {id:4,food:'Samosa',cat:'Bakery Items',qty:100,serves:100,loc:'Saddar, Karachi',expiry:'2026-06-05T20:00',phone:'+92 300 1111111',notes:'',date:'2026-06-05',status:'pending'},
+      {id:5,food:'Cake',cat:'Bakery Items',qty:8,serves:32,loc:'Clifton, Karachi',expiry:'2026-06-04T10:00',phone:'+92 300 1111111',notes:'',date:'2026-06-04',status:'expired'},
+    ]);
+  }
+
+  function updateStats(){
+    const d=getDons();
+    document.getElementById('s-total').textContent    =d.length;
+    document.getElementById('s-available').textContent=d.filter(x=>x.status==='available').length;
+    document.getElementById('s-claimed').textContent  =d.filter(x=>x.status==='claimed').length;
+    document.getElementById('s-expired').textContent  =d.filter(x=>x.status==='expired').length;
+  }
+
+  function renderTable(){
+    const dons  =getDons();
+    const search=document.getElementById('searchInput').value.toLowerCase();
+    const status=document.getElementById('statusFilter').value;
+    const cat   =document.getElementById('catFilter').value;
+    const f=dons.filter(d=>{
+      const ms=d.food.toLowerCase().includes(search);
+      const mst=!status||d.status===status;
+      const mc=!cat||d.cat===cat;
+      return ms&&mst&&mc;
+    });
+    const tbody=document.getElementById('donBody');
+    if(!f.length){tbody.innerHTML=`<tr class="empty-row"><td colspan="8">No donations found.</td></tr>`;return;}
+    tbody.innerHTML=f.map((d,i)=>`
+      <tr>
+        <td style="color:var(--muted);font-size:.75rem;">${i+1}</td>
+        <td><span style="margin-right:5px;">${EMOJI[d.cat]||'🍱'}</span><strong>${d.food}</strong></td>
+        <td style="color:var(--muted);">${d.cat}</td>
+        <td><strong>${d.qty}</strong></td>
+        <td style="color:var(--muted);font-size:.76rem;">📍 ${d.loc}</td>
+        <td style="color:var(--muted);">${d.date}</td>
+        <td><span class="tag ${d.status}">${d.status.charAt(0).toUpperCase()+d.status.slice(1)}</span></td>
+        <td>
+          <div class="actions">
+            ${d.status==='available'||d.status==='pending'?`<button class="ab edit" onclick="openEdit(${d.id})">Edit</button>`:''}
+            <button class="ab del" onclick="deleteDon(${d.id})">Delete</button>
+          </div>
+        </td>
+      </tr>`).join('');
+  }
+
+  function openEdit(id){
+    const d=getDons().find(x=>x.id===id);
+    if(!d)return;
+    editId=id;
+    document.getElementById('e-food').value  =d.food;
+    document.getElementById('e-cat').value   =d.cat;
+    document.getElementById('e-qty').value   =d.qty;
+    document.getElementById('e-expiry').value=d.expiry;
+    document.getElementById('e-loc').value   =d.loc;
+    document.getElementById('e-notes').value =d.notes;
+    document.getElementById('modalOverlay').classList.add('show');
+  }
+  function closeModal(){document.getElementById('modalOverlay').classList.remove('show');editId=null;}
+
+  function saveEdit(){
+    const food  =document.getElementById('e-food').value.trim();
+    const cat   =document.getElementById('e-cat').value;
+    const qty   =document.getElementById('e-qty').value;
+    const expiry=document.getElementById('e-expiry').value;
+    const loc   =document.getElementById('e-loc').value.trim();
+    const notes =document.getElementById('e-notes').value.trim();
+    if(!food){showToast('⚠️ Food name required!');return;}
+    const dons=getDons().map(d=>d.id===editId?{...d,food,cat,qty:Number(qty),expiry,loc,notes}:d);
+    saveDons(dons);closeModal();renderTable();updateStats();
+    showToast('✅ Donation updated!');
+  }
+
+  function deleteDon(id){
+    if(!confirm('Delete this donation?'))return;
+    saveDons(getDons().filter(d=>d.id!==id));
+    showToast('🗑️ Donation deleted.');renderTable();updateStats();
+  }
+
+  function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+  document.getElementById('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+  seed();renderTable();updateStats();
+</script>
+</body>
+</html>
